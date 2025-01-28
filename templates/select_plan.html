@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Trainingsplan auswählen</title>
+</head>
+<body>
+    <h1>Trainingsplan auswählen</h1>
+    <form method="post">
+        <label for="plan">Wähle einen Trainingsplan:</label>
+        <select name="plan_id" id="plan" required>
+            {% for plan in plans %}
+                <option value="{{ plan[0] }}">{{ plan[1] }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Auswählen</button>
+    </form>
+</body>
+</html>
+
+
+

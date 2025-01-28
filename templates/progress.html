@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+        <title>Fortschritte</title>
+</head>
+<body>
+    <h1>Abgeschlossene Trainingssessions</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Trainingsplan</th>
+                <th>Datum</th>
+                <th>Aktionen</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for session in sessions %}
+            <tr>
+                <td>{{ session[1] }}</td>
+                <td>{{ session[2] }}</td>
+                <td>
+                    <a href="{{ url_for('session_details', session_id=session[0]) }}">Details ansehen</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+ <a href="/"> Startseite </a> 
+</body>
+
+</html>
+
+

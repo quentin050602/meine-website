@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trainingspläne</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f5;
+        }
+
+        .content {
+            max-width: 900px;
+            margin: 50px auto;
+            background: linear-gradient(to right, #ffffff, #f7f7fa);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2d2d86;
+            font-size: 2.5em;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #3d3d99;
+            margin-top: 30px;
+            border-bottom: 2px solid #007BFF;
+            padding-bottom: 5px;
+        }
+
+        p {
+            text-align: center;
+            font-size: 1.2em;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        a {
+            display: inline-block;
+            text-align: center;
+            margin: 15px auto;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+        
+        a:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .content img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .footer-buttons {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .footer-buttons a {
+            display: inline-block;
+            padding: 8px 20px; /* Kleinere Knöpfe */
+            font-size: 0.9em;
+            background-color: #000;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>Trainingspläne</h1>
+        <img src="{{ url_for('static', filename='images/training-banner.jpg') }}" alt="Trainingspläne Banner">
+        <p>Hier findest du alle verfügbaren Trainingspläne, die dich auf deinem Fitnessweg unterstützen. Wähle den Plan, der am besten zu dir passt, und starte dein Training heute!</p>
+        
+        <h2>Ganzkörper (2-3 Trainingseinheiten / Woche)</h2>
+        <a href="downloads/GKAnfänger.pdf" download>Anfänger-Trainingsplan</a>
+        <a href="downloads/GKFortgeschrittene.pdf" download">Fortgeschrittene-Trainingsplan</a>
+
+        <h2>Oberkörper-Unterkörper Split (4 Trainingseinheiten / Woche)</h2>
+        <a href="downloads/OKUKAnfänger.pdf" download >Anfänger-Trainingsplan</a>
+        <a href="downloads/OKUKFortgeschrittene.pdf" download>Fortgeschrittene-Trainingsplan</a>
+
+        <h2>Push-Pull-Legs (6 Trainingseinheiten / Woche)</h2>
+        <a href="downloads/PPLAnfänger.pdf" download>Anfänger-Trainingsplan</a>
+        <a href="downloads/PPLFortgeschrittene.pdf" target="_blank">Fortgeschrittene-Trainingsplan</a>
+        
+        <div class="footer-buttons">
+            <a href="/" target="_blank">Zurück zur Startseite</a>
+            <a href="/nutrition" target="_blank">Zu den Ernährungsplänen</a>
+        </div>
+
+        <footer>&copy; 2025 Trainingspläne. Dein Weg zu einem fitteren Leben.</footer>
+    </div>
+</body>
+</html>
+
+

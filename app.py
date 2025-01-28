@@ -1,0 +1,244 @@
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+import psycopg2
+
+app = Flask(__name__)
+app.secret_key = 'dein_geheimer_schluessel'
+bcrypt = Bcrypt(app)
+
+# Flask-Login Setup
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+
+# Verbindung zur PostgreSQL-Datenbank
+def get_db_connection():
+    conn = psycopg2.connect(
+        dbname='trainingsdb',
+        user='quentin',  # PostgreSQL-Benutzername
+        password='05Que06$',  # PostgreSQL-Passwort
+        host='localhost'
+    )
+    return conn
+
+# Flask-Login User-Klasse
+class User(UserMixin):
+    def __init__(self, id, username, password):
+        self.id = id
+        self.username = username
+        self.password = password
+
+@login_manager.user_loader
+def load_user(user_id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT id, username, password FROM users WHERE id = %s', (user_id,))
+    user = cur.fetchone()
+    cur.close()
+    conn.close()
+    if user:
+        return User(user[0], user[1], user[2])
+    return None
+
+
+@app.route('/downloads/<filename>')
+def download_file(filename):
+    return send_from_directory('downloads', filename, as_attachment=True)
+
+# Route: Startseite
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+# Route: Trainingspläne
+@app.route('/training')
+def training():
+    return render_template('training.html')
+
+# Route: Ernährungspläne
+@app.route('/nutrition')
+def nutrition():
+    return render_template('nutrition.html')
+
+# Route: Add (Zwischenseite)
+@app.route('/add')
+def add():
+    return render_template('add.html')
+
+# Route: Fortschritte anzeigen (geschützt)
+@app.route('/progress')
+@login_required
+def progress():
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    # Trainingssessions abrufen
+    cur.execute('''
+        SELECT ts.id, p.name, ts.date
+        FROM training_sessions ts
+        JOIN plans p ON ts.plan_id = p.id
+        WHERE ts.user_id = %s
+        ORDER BY ts.date DESC;
+    ''', (current_user.id,))
+    sessions = cur.fetchall()
+
+    cur.close()
+    conn.close()
+    return render_template('progress.html', sessions=sessions)
+
+# Route: Trainingsplan auswählen
+@app.route('/select_plan', methods=['GET', 'POST'])
+@login_required
+def select_plan():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT id, name FROM plans;')
+    plans = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    if request.method == 'POST':
+        selected_plan_id = request.form['plan_id']
+        return redirect(url_for('track_plan', plan_id=selected_plan_id))
+
+    return render_template('select_plan.html', plans=plans)
+
+# Route: Training tracken
+@app.route('/track_plan/<int:plan_id>', methods=['GET', 'POST'])
+@login_required
+def track_plan(plan_id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    # Übungen für den Plan abrufen
+    cur.execute('SELECT id, exercise_name FROM exercises WHERE plan_id = %s;', (plan_id,))
+    exercises = cur.fetchall()
+
+    if request.method == 'POST':
+        date = request.form['date']
+
+        # Trainingssession erstellen
+        cur.execute(
+            'INSERT INTO training_sessions (user_id, plan_id, date) VALUES (%s, %s, %s) RETURNING id;',
+            (current_user.id, plan_id, date)
+        )
+        session_id = cur.fetchone()[0]
+
+        # Fortschritt für jede Übung speichern
+        for exercise in exercises:
+            exercise_id = exercise[0]
+            sets = request.form.get(f'sets_{exercise_id}')
+            reps = request.form.get(f'reps_{exercise_id}')
+            weight = request.form.get(f'weight_{exercise_id}')
+
+            cur.execute(
+                'INSERT INTO progress (session_id, exercise_id, sets, reps, weight) VALUES (%s, %s, %s, %s, %s);',
+                (session_id, exercise_id, sets, reps, weight)
+            )
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        flash('Training erfolgreich abgeschlossen!', 'success')
+        return redirect(url_for('progress'))
+
+    cur.close()
+    conn.close()
+    return render_template('track_plan.html', exercises=exercises, plan_id=plan_id)
+
+# Route: Session-Details
+@app.route('/session/<int:session_id>')
+@login_required
+def session_details(session_id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    # Informationen zur Session abrufen
+    cur.execute('''
+        SELECT ts.date, p.name
+        FROM training_sessions ts
+        JOIN plans p ON ts.plan_id = p.id
+        WHERE ts.id = %s AND ts.user_id = %s;
+    ''', (session_id, current_user.id))
+    session_info = cur.fetchone()
+
+    if not session_info:
+        flash('Keine Details für diese Session gefunden oder unberechtigter Zugriff.', 'danger')
+        return redirect(url_for('progress'))
+
+    # Übungen und Fortschritte für diese Session abrufen
+    cur.execute('''
+        SELECT e.exercise_name, pr.sets, pr.reps, pr.weight
+        FROM progress pr
+        JOIN exercises e ON pr.exercise_id = e.id
+        WHERE pr.session_id = %s;
+    ''', (session_id,))
+    progress = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return render_template('session_details.html', session=session_info, progress=progress)
+
+# Route: Registrierung
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+        conn = get_db_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute('INSERT INTO users (username, password) VALUES (%s, %s)', (username, hashed_password))
+            conn.commit()
+            flash('Registrierung erfolgreich. Bitte melde dich an.', 'success')
+            return redirect(url_for('login'))
+        except psycopg2.errors.UniqueViolation:
+            conn.rollback()
+            flash('Benutzername existiert bereits.', 'danger')
+        finally:
+            cur.close()
+            conn.close()
+
+    return render_template('register.html')
+
+# Route: Anmeldung
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute('SELECT id, username, password FROM users WHERE username = %s', (username,))
+        user = cur.fetchone()
+        cur.close()
+        conn.close()
+
+        if user and bcrypt.check_password_hash(user[2], password):
+            login_user(User(user[0], user[1], user[2]))
+            flash('Anmeldung erfolgreich.', 'success')
+            return redirect(url_for('progress'))
+        else:
+            flash('Ungültige Anmeldedaten.', 'danger')
+
+    return render_template('login.html')
+
+# Route: Logout
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('Erfolgreich abgemeldet.', 'success')
+    return redirect(url_for('login'))
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+
+ 
+
