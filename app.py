@@ -2,9 +2,13 @@ from flask import Flask, render_template, request, redirect, url_for, flash, sen
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 import psycopg2
+import os
 
 app = Flask(__name__)
-app.secret_key = 'dein_geheimer_schluessel'
+
+# App-Konfiguration
+app.secret_key = os.getenv('SECRET_KEY', 'fallback_geheimer_schluessel')  # Umgebungsvariable für den geheimen Schlüssel
+
 bcrypt = Bcrypt(app)
 
 # Flask-Login Setup
@@ -13,12 +17,7 @@ login_manager.login_view = 'login'
 
 # Verbindung zur PostgreSQL-Datenbank
 def get_db_connection():
-    conn = psycopg2.connect(
-        dbname='trainingsdb',
-        user='quentin',  # PostgreSQL-Benutzername
-        password='05Que06$',  # PostgreSQL-Passwort
-        host='localhost'
-    )
+    conn = psycopg2.connect(os.getenv('DATABASE_URL') + '?sslmode=require')  # PostgreSQL-URL aus der Umgebungsvariable
     return conn
 
 # Flask-Login User-Klasse
@@ -40,7 +39,7 @@ def load_user(user_id):
         return User(user[0], user[1], user[2])
     return None
 
-
+# Route: Downloads
 @app.route('/downloads/<filename>')
 def download_file(filename):
     return send_from_directory('downloads', filename, as_attachment=True)
@@ -71,8 +70,6 @@ def add():
 def progress():
     conn = get_db_connection()
     cur = conn.cursor()
-
-    # Trainingssessions abrufen
     cur.execute('''
         SELECT ts.id, p.name, ts.date
         FROM training_sessions ts
@@ -81,7 +78,6 @@ def progress():
         ORDER BY ts.date DESC;
     ''', (current_user.id,))
     sessions = cur.fetchall()
-
     cur.close()
     conn.close()
     return render_template('progress.html', sessions=sessions)
@@ -109,28 +105,21 @@ def select_plan():
 def track_plan(plan_id):
     conn = get_db_connection()
     cur = conn.cursor()
-
-    # Übungen für den Plan abrufen
     cur.execute('SELECT id, exercise_name FROM exercises WHERE plan_id = %s;', (plan_id,))
     exercises = cur.fetchall()
 
     if request.method == 'POST':
         date = request.form['date']
-
-        # Trainingssession erstellen
         cur.execute(
             'INSERT INTO training_sessions (user_id, plan_id, date) VALUES (%s, %s, %s) RETURNING id;',
             (current_user.id, plan_id, date)
         )
         session_id = cur.fetchone()[0]
-
-        # Fortschritt für jede Übung speichern
         for exercise in exercises:
             exercise_id = exercise[0]
             sets = request.form.get(f'sets_{exercise_id}')
             reps = request.form.get(f'reps_{exercise_id}')
             weight = request.form.get(f'weight_{exercise_id}')
-
             cur.execute(
                 'INSERT INTO progress (session_id, exercise_id, sets, reps, weight) VALUES (%s, %s, %s, %s, %s);',
                 (session_id, exercise_id, sets, reps, weight)
@@ -153,8 +142,6 @@ def track_plan(plan_id):
 def session_details(session_id):
     conn = get_db_connection()
     cur = conn.cursor()
-
-    # Informationen zur Session abrufen
     cur.execute('''
         SELECT ts.date, p.name
         FROM training_sessions ts
@@ -167,7 +154,6 @@ def session_details(session_id):
         flash('Keine Details für diese Session gefunden oder unberechtigter Zugriff.', 'danger')
         return redirect(url_for('progress'))
 
-    # Übungen und Fortschritte für diese Session abrufen
     cur.execute('''
         SELECT e.exercise_name, pr.sets, pr.reps, pr.weight
         FROM progress pr
@@ -237,7 +223,8 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=os.getenv('DEBUG', False) == 'True')
+
 
 
  
