@@ -6,8 +6,8 @@ import os
 
 app = Flask(__name__)
 
-# App-Konfiguration
-app.secret_key = os.getenv('SECRET_KEY', 'fallback_geheimer_schluessel')  # Umgebungsvariable für den geheimen Schlüssel
+# Sicherheitsschlüssel (verwende eine Umgebungsvariable in Produktion)
+app.secret_key = os.getenv('SECRET_KEY', 'mein_geheimer_schlüssel')
 
 bcrypt = Bcrypt(app)
 
@@ -15,12 +15,17 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-# Verbindung zur PostgreSQL-Datenbank
+# **Datenbankverbindung (lokal & online)**
 def get_db_connection():
-    conn = psycopg2.connect(os.getenv('DATABASE_URL') + '?sslmode=require')  # PostgreSQL-URL aus der Umgebungsvariable
-    return conn
+    database_url = os.getenv('DATABASE_URL', 'postgresql://quentin:05Que06$@localhost:5432/trainingsdb')
 
-# Flask-Login User-Klasse
+    # Falls die Datenbank auf Render läuft, SSL aktivieren
+    if 'render.com' in database_url:
+        database_url += '?sslmode=require'
+    
+    return psycopg2.connect(database_url)
+
+# User-Klasse für Flask-Login
 class User(UserMixin):
     def __init__(self, id, username, password):
         self.id = id
@@ -39,10 +44,19 @@ def load_user(user_id):
         return User(user[0], user[1], user[2])
     return None
 
-# Route: Downloads
-@app.route('/downloads/<filename>')
-def download_file(filename):
-    return send_from_directory('downloads', filename, as_attachment=True)
+# Route: Verbindung zur Datenbank testen
+@app.route('/test_db')
+def test_db():
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT 1")
+        result = cur.fetchone()
+        cur.close()
+        conn.close()
+        return f"Database Connection Successful: {result}"
+    except Exception as e:
+        return f"Database Connection Failed: {str(e)}"
 
 # Route: Startseite
 @app.route('/')
@@ -58,11 +72,6 @@ def training():
 @app.route('/nutrition')
 def nutrition():
     return render_template('nutrition.html')
-
-# Route: Add (Zwischenseite)
-@app.route('/add')
-def add():
-    return render_template('add.html')
 
 # Route: Fortschritte anzeigen (geschützt)
 @app.route('/progress')
@@ -82,91 +91,6 @@ def progress():
     conn.close()
     return render_template('progress.html', sessions=sessions)
 
-# Route: Trainingsplan auswählen
-@app.route('/select_plan', methods=['GET', 'POST'])
-@login_required
-def select_plan():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('SELECT id, name FROM plans;')
-    plans = cur.fetchall()
-    cur.close()
-    conn.close()
-
-    if request.method == 'POST':
-        selected_plan_id = request.form['plan_id']
-        return redirect(url_for('track_plan', plan_id=selected_plan_id))
-
-    return render_template('select_plan.html', plans=plans)
-
-# Route: Training tracken
-@app.route('/track_plan/<int:plan_id>', methods=['GET', 'POST'])
-@login_required
-def track_plan(plan_id):
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('SELECT id, exercise_name FROM exercises WHERE plan_id = %s;', (plan_id,))
-    exercises = cur.fetchall()
-
-    if request.method == 'POST':
-        date = request.form['date']
-        cur.execute(
-            'INSERT INTO training_sessions (user_id, plan_id, date) VALUES (%s, %s, %s) RETURNING id;',
-            (current_user.id, plan_id, date)
-        )
-        session_id = cur.fetchone()[0]
-        for exercise in exercises:
-            exercise_id = exercise[0]
-            sets = request.form.get(f'sets_{exercise_id}')
-            reps = request.form.get(f'reps_{exercise_id}')
-            weight = request.form.get(f'weight_{exercise_id}')
-            cur.execute(
-                'INSERT INTO progress (session_id, exercise_id, sets, reps, weight) VALUES (%s, %s, %s, %s, %s);',
-                (session_id, exercise_id, sets, reps, weight)
-            )
-
-        conn.commit()
-        cur.close()
-        conn.close()
-
-        flash('Training erfolgreich abgeschlossen!', 'success')
-        return redirect(url_for('progress'))
-
-    cur.close()
-    conn.close()
-    return render_template('track_plan.html', exercises=exercises, plan_id=plan_id)
-
-# Route: Session-Details
-@app.route('/session/<int:session_id>')
-@login_required
-def session_details(session_id):
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('''
-        SELECT ts.date, p.name
-        FROM training_sessions ts
-        JOIN plans p ON ts.plan_id = p.id
-        WHERE ts.id = %s AND ts.user_id = %s;
-    ''', (session_id, current_user.id))
-    session_info = cur.fetchone()
-
-    if not session_info:
-        flash('Keine Details für diese Session gefunden oder unberechtigter Zugriff.', 'danger')
-        return redirect(url_for('progress'))
-
-    cur.execute('''
-        SELECT e.exercise_name, pr.sets, pr.reps, pr.weight
-        FROM progress pr
-        JOIN exercises e ON pr.exercise_id = e.id
-        WHERE pr.session_id = %s;
-    ''', (session_id,))
-    progress = cur.fetchall()
-
-    cur.close()
-    conn.close()
-
-    return render_template('session_details.html', session=session_info, progress=progress)
-
 # Route: Registrierung
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -181,13 +105,14 @@ def register():
             cur.execute('INSERT INTO users (username, password) VALUES (%s, %s)', (username, hashed_password))
             conn.commit()
             flash('Registrierung erfolgreich. Bitte melde dich an.', 'success')
-            return redirect(url_for('login'))
         except psycopg2.errors.UniqueViolation:
             conn.rollback()
             flash('Benutzername existiert bereits.', 'danger')
         finally:
             cur.close()
             conn.close()
+
+        return redirect(url_for('login'))
 
     return render_template('register.html')
 
@@ -223,7 +148,8 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__ == "__main__":
-    app.run(debug=os.getenv('DEBUG', False) == 'True')
+    app.run(debug=os.getenv('DEBUG', 'False') == 'True')
+
 
 
 
