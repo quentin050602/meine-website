@@ -1,61 +1,62 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, send_file
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+import psycopg2
 import os
-import mimetypes
 
 app = Flask(__name__)
 
 # Sicherheitsschlüssel (verwende eine Umgebungsvariable für Produktion)
 app.secret_key = os.getenv('SECRET_KEY', 'mein_geheimer_schlüssel')
 
-# **Datenbankkonfiguration (Render oder Lokal)**
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
-    'DATABASE_URL', 'postgresql://quentin:05Que06$@localhost:5432/trainingsdb'
-)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)  # Flask-Migrate für Migrationen aktivieren
 bcrypt = Bcrypt(app)
 
 # Flask-Login Setup
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-# **User-Modell für Flask-Login**
-class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(150), nullable=False)
+# **Datenbankverbindung mit psycopg2 (Render oder Lokal)**
+def get_db_connection():
+    db_url = os.getenv('DATABASE_URL', 'postgresql://quentin:05Que06$@localhost:5432/trainingsdb')
+    return psycopg2.connect(db_url, sslmode="require" if "render.com" in db_url else "disable")
+
+# Flask-Login User-Klasse
+class User(UserMixin):
+    def __init__(self, id, username, password):
+        self.id = id
+        self.username = username
+        self.password = password
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT id, username, password FROM users WHERE id = %s', (user_id,))
+    user = cur.fetchone()
+    cur.close()
+    conn.close()
+    if user:
+        return User(user[0], user[1], user[2])
+    return None
 
 # **Route: Datenbankverbindung testen**
 @app.route('/test_db')
 def test_db():
     try:
-        conn = db.engine.connect()
+        conn = get_db_connection()
         conn.close()
         return "Database Connection Successful!"
     except Exception as e:
         return f"Database Connection Failed: {str(e)}"
 
-# **Route: Download ohne .html-Anhang**
+# **Route: Datei-Download ohne .html-Probleme**
 @app.route('/downloads/<filename>')
 def download_file(filename):
-    # Absoluter Pfad zur Datei
     file_path = os.path.join("downloads", filename)
 
-    # Prüfen, ob die Datei existiert
     if not os.path.exists(file_path):
         return "Datei nicht gefunden", 404
 
-    # Datei korrekt senden
     return send_file(file_path, as_attachment=True)
 
 # **Route: Startseite**
@@ -92,15 +93,20 @@ def register():
 
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
-        new_user = User(username=username, password=hashed_password)
+        conn = get_db_connection()
+        cur = conn.cursor()
         try:
-            db.session.add(new_user)
-            db.session.commit()
+            cur.execute('INSERT INTO users (username, password) VALUES (%s, %s)', (username, hashed_password))
+            conn.commit()
             flash('Registrierung erfolgreich. Bitte melde dich an.', 'success')
-            return redirect(url_for('login'))
-        except:
-            db.session.rollback()
+        except psycopg2.errors.UniqueViolation:
+            conn.rollback()
             flash('Benutzername existiert bereits.', 'danger')
+        finally:
+            cur.close()
+            conn.close()
+
+        return redirect(url_for('login'))
 
     return render_template('register.html')
 
@@ -111,10 +117,16 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        user = User.query.filter_by(username=username).first()
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute('SELECT id, username, password FROM users WHERE username = %s', (username,))
+        user = cur.fetchone()
+        cur.close()
+        conn.close()
+
         if user:
-            if bcrypt.check_password_hash(user.password, password):
-                login_user(user)
+            if bcrypt.check_password_hash(user[2], password):
+                login_user(User(user[0], user[1], user[2]))
                 flash('Anmeldung erfolgreich.', 'success')
                 return redirect(url_for('progress'))
             else:
