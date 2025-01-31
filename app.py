@@ -17,8 +17,17 @@ login_manager.login_view = 'login'
 
 # **Datenbankverbindung mit psycopg2 (Render oder Lokal)**
 def get_db_connection():
-    db_url = os.getenv('DATABASE_URL', 'postgresql://quentin:05Que06$@localhost:5432/trainingsdb')
-    return psycopg2.connect(db_url, sslmode="require" if "render.com" in db_url else "disable")
+    db_url = os.getenv('DATABASE_URL')
+
+    if not db_url:
+        raise RuntimeError("❌ Fehler: `DATABASE_URL` ist nicht gesetzt. Überprüfe die Render-Umgebungsvariablen!")
+
+    # Falls die Verbindung auf Render ist, erzwinge SSL (erforderlich für PostgreSQL auf Render)
+    if "render.com" in db_url:
+        db_url += "?sslmode=require"
+
+    return psycopg2.connect(db_url)
+
 
 # Flask-Login User-Klasse
 class User(UserMixin):
