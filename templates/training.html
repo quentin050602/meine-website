@@ -98,16 +98,17 @@
         <p>Hier findest du alle verfügbaren Trainingspläne, die dich auf deinem Fitnessweg unterstützen. Wähle den Plan, der am besten zu dir passt, und starte dein Training heute!</p>
         
         <h2>Ganzkörper (2-3 Trainingseinheiten / Woche)</h2>
-        <a href="downloads/GKAnfänger.pdf" download>Anfänger-Trainingsplan</a>
-        <a href="downloads/GKFortgeschrittene.pdf" download">Fortgeschrittene-Trainingsplan</a>
+        <a href="{{ url_for('download_file', filename='GKAnfänger.pdf') }}" download>Anfänger-Trainingsplan</a>
+        <a href="{{ url_for('download_file', filename='GKFortgeschrittene.pdf') }}" download>Fortgeschrittene-Trainingsplan</a>
 
         <h2>Oberkörper-Unterkörper Split (4 Trainingseinheiten / Woche)</h2>
-        <a href="downloads/OKUKAnfänger.pdf" download >Anfänger-Trainingsplan</a>
-        <a href="downloads/OKUKFortgeschrittene.pdf" download>Fortgeschrittene-Trainingsplan</a>
+        <a href="{{ url_for('download_file', filename='OKUKAnfänger.pdf') }}" download>Anfänger-Trainingsplan</a>
+        <a href="{{ url_for('download_file', filename='OKUKFortgeschrittene.pdf') }}" download>Fortgeschrittene-Trainingsplan</a>
 
         <h2>Push-Pull-Legs (6 Trainingseinheiten / Woche)</h2>
-        <a href="downloads/PPLAnfänger.pdf" download>Anfänger-Trainingsplan</a>
-        <a href="downloads/PPLFortgeschrittene.pdf" target="_blank">Fortgeschrittene-Trainingsplan</a>
+        <a href="{{ url_for('download_file', filename='PPLAnfänger.pdf') }}" download>Anfänger-Trainingsplan</a>
+        <a href="{{ url_for('download_file', filename='PPLFortgeschrittene.pdf') }}" download>Fortgeschrittene-Trainingsplan</a>
+
         
         <div class="footer-buttons">
             <a href="/" target="_blank">Zurück zur Startseite</a>
