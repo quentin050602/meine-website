@@ -96,12 +96,18 @@ def register():
         conn = get_db_connection()
         cur = conn.cursor()
         try:
-            cur.execute('INSERT INTO users (username, password) VALUES (%s, %s)', (username, hashed_password))
+            cur.execute('INSERT INTO users (username, password) VALUES (%s, %s) RETURNING id', (username, hashed_password))
+            user_id = cur.fetchone()[0]
             conn.commit()
-            flash('Registrierung erfolgreich. Bitte melde dich an.', 'success')
+            flash(f'Registrierung erfolgreich für {username}. Bitte melde dich an.', 'success')
+            print(f"DEBUG: Benutzer {username} mit ID {user_id} registriert")  # Debug-Ausgabe
         except psycopg2.errors.UniqueViolation:
             conn.rollback()
             flash('Benutzername existiert bereits.', 'danger')
+        except Exception as e:
+            conn.rollback()
+            flash(f'Datenbankfehler: {str(e)}', 'danger')
+            print(f"DEBUG: Fehler bei Registrierung - {str(e)}")  # Debug-Ausgabe
         finally:
             cur.close()
             conn.close()
@@ -125,14 +131,18 @@ def login():
         conn.close()
 
         if user:
+            print(f"DEBUG: Benutzer {user[1]} gefunden mit ID {user[0]}")  # Debug-Ausgabe
+
             if bcrypt.check_password_hash(user[2], password):
                 login_user(User(user[0], user[1], user[2]))
                 flash('Anmeldung erfolgreich.', 'success')
                 return redirect(url_for('progress'))
             else:
                 flash('Falsches Passwort.', 'danger')
+                print("DEBUG: Passwort stimmt nicht überein!")  # Debug-Ausgabe
         else:
             flash('Benutzer existiert nicht.', 'danger')
+            print("DEBUG: Benutzer nicht gefunden!")  # Debug-Ausgabe
 
     return render_template('login.html')
 
