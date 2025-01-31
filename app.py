@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, flash, send_file
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import os
+import mimetypes
 
 app = Flask(__name__)
 
@@ -44,6 +45,19 @@ def test_db():
     except Exception as e:
         return f"Database Connection Failed: {str(e)}"
 
+# **Route: Download ohne .html-Anhang**
+@app.route('/downloads/<filename>')
+def download_file(filename):
+    # Absoluter Pfad zur Datei
+    file_path = os.path.join("downloads", filename)
+
+    # Prüfen, ob die Datei existiert
+    if not os.path.exists(file_path):
+        return "Datei nicht gefunden", 404
+
+    # Datei korrekt senden
+    return send_file(file_path, as_attachment=True)
+
 # **Route: Startseite**
 @app.route('/')
 def home():
@@ -71,13 +85,18 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+
+        if not username or not password:
+            flash('Benutzername und Passwort dürfen nicht leer sein.', 'danger')
+            return redirect(url_for('register'))
+
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
         new_user = User(username=username, password=hashed_password)
         try:
             db.session.add(new_user)
             db.session.commit()
-            flash(f'Registrierung erfolgreich für {username}.', 'success')
+            flash('Registrierung erfolgreich. Bitte melde dich an.', 'success')
             return redirect(url_for('login'))
         except:
             db.session.rollback()
@@ -93,12 +112,15 @@ def login():
         password = request.form['password']
 
         user = User.query.filter_by(username=username).first()
-        if user and bcrypt.check_password_hash(user.password, password):
-            login_user(user)
-            flash('Anmeldung erfolgreich.', 'success')
-            return redirect(url_for('progress'))
+        if user:
+            if bcrypt.check_password_hash(user.password, password):
+                login_user(user)
+                flash('Anmeldung erfolgreich.', 'success')
+                return redirect(url_for('progress'))
+            else:
+                flash('Falsches Passwort.', 'danger')
         else:
-            flash('Ungültige Anmeldedaten.', 'danger')
+            flash('Benutzer existiert nicht.', 'danger')
 
     return render_template('login.html')
 
@@ -112,6 +134,8 @@ def logout():
 
 if __name__ == "__main__":
     app.run(debug=os.getenv('DEBUG', 'False') == 'True')
+
+
 
 
 
