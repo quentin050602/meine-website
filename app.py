@@ -113,8 +113,8 @@ def calculate_tdee(gender, age, weight, height, job_activity, sport_frequency):
     return round(tdee, 2)
     
 #Route Kalorien
-@app.route('/kalorien', methods=['GET', 'POST'])
-def kalorien():
+@app.route('/Kalorien', methods=['GET', 'POST'])
+def Kalorien():
     result = None
     if request.method == 'POST':
         try:
@@ -131,7 +131,7 @@ def kalorien():
         except ValueError:
             result = "Ungültige Eingabe, bitte überprüfe deine Werte."
 
-    return render_template('kalorien.html', result=result)
+    return render_template('Kalorien.html', result=result)
 
  
  
