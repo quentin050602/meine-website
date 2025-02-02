@@ -2,33 +2,34 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-        <title>Fortschritte</title>
+    <title>Trainingsfortschritt</title>
 </head>
 <body>
-    <h1>Abgeschlossene Trainingssessions</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Trainingsplan</th>
-                <th>Datum</th>
-                <th>Aktionen</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for session in sessions %}
-            <tr>
-                <td>{{ session[1] }}</td>
-                <td>{{ session[2] }}</td>
-                <td>
-                    <a href="{{ url_for('session_details', session_id=session[0]) }}">Details ansehen</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
- <a href="/"> Startseite </a> 
+    <h1>Dein Trainingsfortschritt</h1>
+    
+    {% if sessions %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Session ID</th>
+                    <th>Trainingsplan</th>
+                    <th>Datum</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for session in sessions %}
+                <tr>
+                    <td>{{ session[0] }}</td>
+                    <td>{{ session[1] }}</td>
+                    <td>{{ session[2] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Keine Trainingssessions gefunden.</p>
+    {% endif %}
 </body>
-
 </html>
 
 

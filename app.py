@@ -61,6 +61,9 @@ def test_db():
         return "Database Connection Successful!"
     except Exception as e:
         return f"Database Connection Failed: {str(e)}"
+        
+        
+
 
 # **Route: Datei-Download ohne .html-Probleme**
 @app.route('/downloads/<filename>')
@@ -71,11 +74,15 @@ def download_file(filename):
         return "Datei nicht gefunden", 404
 
     return send_file(file_path, as_attachment=True)
+    
+    
 
 # **Route: Startseite**
 @app.route('/')
 def home():
     return render_template('index.html')
+    
+
     
 # **Route: add**
 @app.route('/add')
@@ -83,22 +90,47 @@ def add():
     return render_template('add.html')
 
 
+
 # **Route: Trainingspläne**
 @app.route('/training')
 def training():
     return render_template('training.html')
+    
+    
 
 # **Route: Ernährungspläne**
 @app.route('/nutrition')
 def nutrition():
     return render_template('nutrition.html')
+    
+    
+
 
 # **Route: Fortschritte anzeigen (geschützt)**
-@app.route('/progress')
+@app.route('/progress', methods=['GET', 'POST'])
 @login_required
 def progress():
-    return render_template('progress.html')
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    # Trainingssessions des aktuellen Benutzers abrufen
+    cur.execute('''
+        SELECT ts.id, p.name, ts.date
+        FROM training_sessions ts
+        JOIN plans p ON ts.plan_id = p.id
+        WHERE ts.user_id = %s
+        ORDER BY ts.date DESC;
+    ''', (current_user.id,))
     
+    sessions = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    # Trainingssessions an das Template übergeben
+    return render_template('progress.html', sessions=sessions)
+
+
 #Route: Plan auswählen
 @app.route('/select_plan', methods=['GET', 'POST'])
 @login_required
