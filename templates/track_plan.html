@@ -2,38 +2,123 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Training tracken</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #007BFF;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        input, select {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <h1>Training tracken</h1>
-    <form method="post">
-        <label for="date">Datum:</label>
-        <input type="date" name="date" id="date" required>
-        <table>
-            <thead>
-                <tr>
-                    <th>Übung</th>
-                    <th>Sätze</th>
-                    <th>Wiederholungen</th>
-                    <th>Gewicht (kg)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for exercise in exercises %}
-                <tr>
-                    <td>{{ exercise[1] }}</td>
-                    <td><input type="number" name="sets_{{ exercise[0] }}" required></td>
-                    <td><input type="number" name="reps_{{ exercise[0] }}" required></td>
-                    <td><input type="number" name="weight_{{ exercise[0] }}" step="0.1" required></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <button type="submit">Training abschließen</button>
-    </form>
+    <div class="container">
+        <h1>Training tracken</h1>
+        <form method="post">
+            <label for="date">Datum:</label>
+            <input type="date" name="date" id="date" required value="{{ today_date }}">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Übung</th>
+                        <th>Sätze</th>
+                        <th>Wiederholungen</th>
+                        <th>Gewicht (kg)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for exercise in exercises %}
+                    <tr>
+                        <td>{{ exercise[1] }}</td>
+                        <td><input type="number" name="sets_{{ exercise[0] }}" min="1" required></td>
+                        <td><input type="number" name="reps_{{ exercise[0] }}" min="1" required></td>
+                        <td><input type="number" name="weight_{{ exercise[0] }}" step="0.1" min="0" required></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit">Training abschließen</button>
+        </form>
+    </div>
 </body>
 </html>
-
 
 
 

@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, send_file
 from flask_bcrypt import Bcrypt
+from datetime import date
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 import psycopg2
 import os
@@ -98,6 +99,7 @@ def nutrition():
 def progress():
     return render_template('progress.html')
     
+#Route: Plan auswählen
 @app.route('/select_plan', methods=['GET', 'POST'])
 @login_required
 def select_plan():
@@ -116,6 +118,25 @@ def select_plan():
         return redirect(url_for('track_plan', plan_id=selected_plan_id))
 
     return render_template('select_plan.html', plans=[{'id': p[0], 'name': p[1]} for p in plans])
+
+#Training tracken
+from datetime import date
+
+@app.route('/track_plan/<int:plan_id>', methods=['GET', 'POST'])
+@login_required
+def track_plan(plan_id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    # Übungen für den gewählten Trainingsplan abrufen
+    cur.execute('SELECT id, exercise_name FROM exercises WHERE plan_id = %s;', (plan_id,))
+    exercises = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return render_template('track_plan.html', exercises=exercises, plan_id=plan_id, today_date=date.today())
+
 
 
 # **Route: Registrierung**
