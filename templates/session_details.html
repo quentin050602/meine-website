@@ -2,37 +2,132 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Session Details</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trainingssession Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #007BFF;
+        }
+
+        .session-info {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .buttons {
+            margin-top: 20px;
+        }
+
+        a {
+            display: inline-block;
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            color: white;
+            text-align: center;
+        }
+
+        .back-progress {
+            background-color: #28a745;
+        }
+
+        .back-progress:hover {
+            background-color: #218838;
+        }
+
+        .home-btn {
+            background-color: #007BFF;
+        }
+
+        .home-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <h1>Details für deine Trainingseinheit</h1>
-    <p><strong>Datum:</strong> {{ session[0] }}</p>
-    <p><strong>Trainingsplan:</strong> {{ session[1] }}</p>
+    <div class="container">
+        <h1>Trainingssession Details</h1>
 
-    <h2>Übungen</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Übung</th>
-                <th>Sätze</th>
-                <th>Wiederholungen</th>
-                <th>Gewicht (kg)</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for exercise in progress %}
-            <tr>
-                <td>{{ exercise[0] }}</td>
-                <td>{{ exercise[1] }}</td>
-                <td>{{ exercise[2] }}</td>
-                <td>{{ exercise[3] }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <a href="{{ url_for('progress') }}">Zurück zu allen Sessions</a>
+        {% if session %}
+            <p class="session-info"><strong>Datum:</strong> {{ session[0] }}</p>
+            <p class="session-info"><strong>Trainingsplan:</strong> {{ session[1] }}</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Übung</th>
+                        <th>Sätze</th>
+                        <th>Wiederholungen</th>
+                        <th>Gewicht (kg)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for exercise in progress %}
+                    <tr>
+                        <td>{{ exercise[0] }}</td>
+                        <td>{{ exercise[1] }}</td>
+                        <td>{{ exercise[2] }}</td>
+                        <td>{{ exercise[3] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Keine Details für diese Session gefunden.</p>
+        {% endif %}
+
+        <div class="buttons">
+            <a class="back-progress" href="{{ url_for('progress') }}">Vergangene Trainingseinheiten</a>
+            <a class="home-btn" href="{{ url_for('home') }}">Zurück zur Startseite</a>
+        </div>
+    </div>
 </body>
 </html>
+
 
 
 
