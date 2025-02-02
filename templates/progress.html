@@ -2,34 +2,115 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trainingsfortschritt</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #007BFF;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        a, button {
+            display: inline-block;
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .details-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .details-btn:hover {
+            background-color: #218838;
+        }
+
+        .home-btn {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .home-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <h1>Dein Trainingsfortschritt</h1>
-    
-    {% if sessions %}
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Session ID</th>
-                    <th>Trainingsplan</th>
-                    <th>Datum</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for session in sessions %}
-                <tr>
-                    <td>{{ session[0] }}</td>
-                    <td>{{ session[1] }}</td>
-                    <td>{{ session[2] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>Keine Trainingssessions gefunden.</p>
-    {% endif %}
+    <div class="container">
+        <h1>Dein Trainingsfortschritt</h1>
+
+        {% if sessions %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Trainingsplan</th>
+                        <th>Datum</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for session in sessions %}
+                    <tr>
+                        <td>{{ session[1] }}</td>
+                        <td>{{ session[2] }}</td>
+                        <td>
+                            <a class="details-btn" href="{{ url_for('session_details', session_id=session[0]) }}">Details</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Keine vergangenen Trainings gefunden.</p>
+        {% endif %}
+
+        <a class="home-btn" href="{{ url_for('home') }}">Zurück zur Startseite</a>
+    </div>
 </body>
 </html>
+
 
 

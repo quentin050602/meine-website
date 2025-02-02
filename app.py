@@ -107,7 +107,7 @@ def nutrition():
 
 
 # **Route: Fortschritte anzeigen (geschützt)**
-@app.route('/progress', methods=['GET', 'POST'])
+@app.route('/progress', methods=['GET'])
 @login_required
 def progress():
     conn = get_db_connection()
@@ -127,7 +127,6 @@ def progress():
     cur.close()
     conn.close()
 
-    # Trainingssessions an das Template übergeben
     return render_template('progress.html', sessions=sessions)
 
 
@@ -152,22 +151,85 @@ def select_plan():
     return render_template('select_plan.html', plans=[{'id': p[0], 'name': p[1]} for p in plans])
 
 #Training tracken
-from datetime import date
-
 @app.route('/track_plan/<int:plan_id>', methods=['GET', 'POST'])
 @login_required
 def track_plan(plan_id):
     conn = get_db_connection()
     cur = conn.cursor()
 
-    # Übungen für den gewählten Trainingsplan abrufen
+    # Übungen für den Plan abrufen
     cur.execute('SELECT id, exercise_name FROM exercises WHERE plan_id = %s;', (plan_id,))
     exercises = cur.fetchall()
+
+    if request.method == 'POST':
+        date = request.form['date']
+
+        # Trainingssession speichern
+        cur.execute(
+            'INSERT INTO training_sessions (user_id, plan_id, date) VALUES (%s, %s, %s) RETURNING id;',
+            (current_user.id, plan_id, date)
+        )
+        session_id = cur.fetchone()[0]
+
+        # Trainingsdetails für jede Übung speichern
+        for exercise in exercises:
+            exercise_id = exercise[0]
+            sets = request.form.get(f'sets_{exercise_id}')
+            reps = request.form.get(f'reps_{exercise_id}')
+            weight = request.form.get(f'weight_{exercise_id}')
+
+            cur.execute(
+                'INSERT INTO progress (session_id, exercise_id, sets, reps, weight) VALUES (%s, %s, %s, %s, %s);',
+                (session_id, exercise_id, sets, reps, weight)
+            )
+
+        conn.commit()  # WICHTIG: Speichert die Änderungen in der Datenbank
+        cur.close()
+        conn.close()
+
+        flash('Training erfolgreich abgeschlossen!', 'success')
+
+        # ✅ Benutzer zur `progress`-Seite weiterleiten
+        return redirect(url_for('progress'))
+
+    cur.close()
+    conn.close()
+    return render_template('track_plan.html', exercises=exercises, plan_id=plan_id)
+
+
+#Session details bei progress
+@app.route('/session/<int:session_id>')
+@login_required
+def session_details(session_id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    # Informationen zur Trainingssession abrufen
+    cur.execute('''
+        SELECT ts.date, p.name
+        FROM training_sessions ts
+        JOIN plans p ON ts.plan_id = p.id
+        WHERE ts.id = %s AND ts.user_id = %s;
+    ''', (session_id, current_user.id))
+    session_info = cur.fetchone()
+
+    if not session_info:
+        flash('Keine Details für diese Session gefunden oder unberechtigter Zugriff.', 'danger')
+        return redirect(url_for('progress'))
+
+    # Übungen und Fortschritte für diese Session abrufen
+    cur.execute('''
+        SELECT e.exercise_name, pr.sets, pr.reps, pr.weight
+        FROM progress pr
+        JOIN exercises e ON pr.exercise_id = e.id
+        WHERE pr.session_id = %s;
+    ''', (session_id,))
+    progress = cur.fetchall()
 
     cur.close()
     conn.close()
 
-    return render_template('track_plan.html', exercises=exercises, plan_id=plan_id, today_date=date.today())
+    return render_template('session_details.html', session=session_info, progress=progress)
 
 
 
