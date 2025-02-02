@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalorienbedarf Rechner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        form {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Kalorienbedarf Rechner</h1>
+    <form method="POST">
+        <label for="gender">Geschlecht:</label>
+        <select id="gender" name="gender" required>
+            <option value="male">Männlich</option>
+            <option value="female">Weiblich</option>
+        </select>
+
+        <label for="age">Alter (Jahre):</label>
+        <input type="number" id="age" name="age" min="10" max="100" required>
+
+        <label for="weight">Gewicht (kg):</label>
+        <input type="number" id="weight" name="weight" step="0.1" required>
+
+        <label for="height">Größe (cm):</label>
+        <input type="number" id="height" name="height" required>
+
+        <label for="job_activity">Tägliche Aktivität:</label>
+        <select id="job_activity" name="job_activity" required>
+            <option value="sedentary">Sitzend (Bürojob, kaum Bewegung)</option>
+            <option value="lightly_active">Leicht aktiv (Lehrer, Verkäufer)</option>
+            <option value="moderately_active">Moderat aktiv (Handwerker, Kellner)</option>
+            <option value="very_active">Sehr aktiv (Bauarbeiter, Landwirt)</option>
+            <option value="extremely_active">Extrem aktiv (Leistungssportler, Schwerstarbeit)</option>
+        </select>
+
+        <label for="sport_frequency">Sportaktivität:</label>
+        <select id="sport_frequency" name="sport_frequency" required>
+            <option value="none">Kein Sport</option>
+            <option value="light">1–2x pro Woche (leichtes Training)</option>
+            <option value="moderate">3–4x pro Woche (mittleres Training)</option>
+            <option value="heavy">5–6x pro Woche (intensives Training)</option>
+            <option value="extreme">Tägliches Training oder Leistungssport</option>
+        </select>
+
+        <button type="submit">Berechnen</button>
+    </form>
+
+    {% if result %}
+        <div class="result">
+            Dein täglicher Kalorienbedarf beträgt: <strong>{{ result }} kcal</strong>
+        </div>
+    {% endif %}
+    <a class="home-btn" href="{{ url_for('home') }}">Zurück zur Startseite</a>
+
+</body>
+</html>
+
+
+

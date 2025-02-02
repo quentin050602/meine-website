@@ -76,6 +76,66 @@ def download_file(filename):
     return send_file(file_path, as_attachment=True)
     
     
+#Logik Kalorienrechner
+
+def calculate_tdee(gender, age, weight, height, job_activity, sport_frequency):
+    """Berechnet den Gesamtumsatz (TDEE) basierend auf verschiedenen Faktoren."""
+    
+    # Grundumsatz (BMR) nach Mifflin-St Jeor Formel
+    if gender == "male":
+        bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5
+    else:
+        bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161
+
+    # Aktivitätsfaktoren für verschiedene Berufsgruppen
+    activity_factors = {
+        "sedentary": 1.2,  # Bürojob, kaum Bewegung
+        "lightly_active": 1.375,  # Leichte Bewegung (z. B. Lehrer, Verkäufer)
+        "moderately_active": 1.55,  # Handwerker, Kellner
+        "very_active": 1.725,  # Bauarbeiter, Landwirt
+        "extremely_active": 1.9,  # Leistungssportler, Schwerstarbeit
+    }
+
+    # Sportkalorien basierend auf der Trainingshäufigkeit
+    sport_calories = {
+        "none": 0,
+        "light": 200,
+        "moderate": 400,
+        "heavy": 600,
+        "extreme": 800,
+    }
+
+    # Berechnung des Gesamtumsatzes
+    if job_activity not in activity_factors or sport_frequency not in sport_calories:
+        return None  # Falls falsche Eingaben gemacht wurden
+
+    tdee = bmr * activity_factors[job_activity] + sport_calories[sport_frequency]
+    return round(tdee, 2)
+    
+#Route Kalorien
+@app.route('/kalorien', methods=['GET', 'POST'])
+def kalorien():
+    result = None
+    if request.method == 'POST':
+        try:
+            gender = request.form['gender']
+            age = int(request.form['age'])
+            weight = float(request.form['weight'])
+            height = float(request.form['height'])
+            job_activity = request.form['job_activity']
+            sport_frequency = request.form['sport_frequency']
+
+            # Berechnung des Kalorienbedarfs
+            result = calculate_tdee(gender, age, weight, height, job_activity, sport_frequency)
+
+        except ValueError:
+            result = "Ungültige Eingabe, bitte überprüfe deine Werte."
+
+    return render_template('kalorien.html', result=result)
+
+ 
+ 
+
 
 # **Route: Startseite**
 @app.route('/')
