@@ -110,9 +110,31 @@ def calculate_tdee(gender, age, weight, height, job_activity, sport_frequency):
         return None  # Falls falsche Eingaben gemacht wurden
 
     tdee = bmr * activity_factors[job_activity] + sport_calories[sport_frequency]
-    return round(tdee, 2)
-    
-#Route Kalorien
+
+    # Berechnung für Bulk (+300 kcal) und Diät (-300 kcal)
+    bulk_calories = tdee + 300
+    diet_calories = tdee - 300
+
+    # Makronährstoffverteilung (30% Eiweiß, 25% Fett, 45% Kohlenhydrate)
+    def calculate_macros(calories):
+        protein = (calories * 0.30) / 4  # Eiweiß: 4 kcal/g
+        fat = (calories * 0.25) / 9  # Fett: 9 kcal/g
+        carbs = (calories * 0.45) / 4  # Kohlenhydrate: 4 kcal/g
+        return round(protein, 1), round(fat, 1), round(carbs, 1)
+
+    maintain_macros = calculate_macros(tdee)
+    bulk_macros = calculate_macros(bulk_calories)
+    diet_macros = calculate_macros(diet_calories)
+
+    return {
+        "tdee": round(tdee, 2),
+        "bulk_calories": round(bulk_calories, 2),
+        "diet_calories": round(diet_calories, 2),
+        "maintain_macros": maintain_macros,
+        "bulk_macros": bulk_macros,
+        "diet_macros": diet_macros
+    }
+
 @app.route('/Kalorien', methods=['GET', 'POST'])
 def Kalorien():
     result = None

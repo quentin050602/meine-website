@@ -3,91 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalorienbedarf Rechner</title>
+    <title>Kalorienrechner</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 50px;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
-        form {
-            max-width: 400px;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #ccc;
+
+        .container {
+            background: white;
+            padding: 30px;
             border-radius: 10px;
-            background-color: #f9f9f9;
-        }
-        input, select, button {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #007BFF;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
             padding: 10px;
-            margin: 5px 0;
+            text-align: center;
         }
-        button {
-            background-color: #28a745;
+
+        th {
+            background-color: #007BFF;
             color: white;
-            border: none;
-            cursor: pointer;
         }
-        button:hover {
-            background-color: #218838;
-        }
+
         .result {
+            font-size: 18px;
             margin-top: 20px;
-            font-size: 1.2em;
             font-weight: bold;
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>Kalorienrechner</h1>
+        <form method="post">
+            <label for="gender">Geschlecht:</label>
+            <select name="gender" id="gender">
+                <option value="male">Männlich</option>
+                <option value="female">Weiblich</option>
+            </select>
 
-    <h1>Kalorienbedarf Rechner</h1>
-    <form method="POST">
-        <label for="gender">Geschlecht:</label>
-        <select id="gender" name="gender" required>
-            <option value="male">Männlich</option>
-            <option value="female">Weiblich</option>
-        </select>
+            <label for="age">Alter:</label>
+            <input type="number" name="age" id="age" required>
 
-        <label for="age">Alter (Jahre):</label>
-        <input type="number" id="age" name="age" min="10" max="100" required>
+            <label for="weight">Gewicht (kg):</label>
+            <input type="number" name="weight" id="weight" required>
 
-        <label for="weight">Gewicht (kg):</label>
-        <input type="number" id="weight" name="weight" step="0.1" required>
+            <label for="height">Größe (cm):</label>
+            <input type="number" name="height" id="height" required>
 
-        <label for="height">Größe (cm):</label>
-        <input type="number" id="height" name="height" required>
+            <button type="submit">Berechnen</button>
+        </form>
 
-        <label for="job_activity">Tägliche Aktivität:</label>
-        <select id="job_activity" name="job_activity" required>
-            <option value="sedentary">Sitzend (Bürojob, kaum Bewegung)</option>
-            <option value="lightly_active">Leicht aktiv (Lehrer, Verkäufer)</option>
-            <option value="moderately_active">Moderat aktiv (Handwerker, Kellner)</option>
-            <option value="very_active">Sehr aktiv (Bauarbeiter, Landwirt)</option>
-            <option value="extremely_active">Extrem aktiv (Leistungssportler, Schwerstarbeit)</option>
-        </select>
-
-        <label for="sport_frequency">Sportaktivität:</label>
-        <select id="sport_frequency" name="sport_frequency" required>
-            <option value="none">Kein Sport</option>
-            <option value="light">1–2x pro Woche (leichtes Training)</option>
-            <option value="moderate">3–4x pro Woche (mittleres Training)</option>
-            <option value="heavy">5–6x pro Woche (intensives Training)</option>
-            <option value="extreme">Tägliches Training oder Leistungssport</option>
-        </select>
-
-        <button type="submit">Berechnen</button>
-    </form>
-
-    {% if result %}
-        <div class="result">
-            Dein täglicher Kalorienbedarf beträgt: <strong>{{ result }} kcal</strong>
-        </div>
-    {% endif %}
-    <a class="home-btn" href="{{ url_for('home') }}">Zurück zur Startseite</a>
-
+        {% if result %}
+            <h2>Dein Kalorienbedarf:</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Phase</th>
+                        <th>Kalorien</th>
+                        <th>Eiweiß (g)</th>
+                        <th>Fett (g)</th>
+                        <th>Kohlenhydrate (g)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Erhaltung</td>
+                        <td>{{ result.tdee }}</td>
+                        <td>{{ result.maintain_macros[0] }}</td>
+                        <td>{{ result.maintain_macros[1] }}</td>
+                        <td>{{ result.maintain_macros[2] }}</td>
+                    </tr>
+                    <tr>
+                        <td>Bulk (+300 kcal)</td>
+                        <td>{{ result.bulk_calories }}</td>
+                        <td>{{ result.bulk_macros[0] }}</td>
+                        <td>{{ result.bulk_macros[1] }}</td>
+                        <td>{{ result.bulk_macros[2] }}</td>
+                    </tr>
+                    <tr>
+                        <td>Diät (-300 kcal)</td>
+                        <td>{{ result.diet_calories }}</td>
+                        <td>{{ result.diet_macros[0] }}</td>
+                        <td>{{ result.diet_macros[1] }}</td>
+                        <td>{{ result.diet_macros[2] }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
 </body>
 </html>
+
 
 
 
