@@ -135,6 +135,8 @@ def calculate_tdee(gender, age, weight, height, job_activity, sport_frequency):
         "diet_macros": diet_macros
     }
 
+
+#Route: Kalorienrechner
 @app.route('/Kalorien', methods=['GET', 'POST'])
 def Kalorien():
     result = None
@@ -186,6 +188,31 @@ def nutrition():
     return render_template('nutrition.html')
     
     
+    
+    
+    
+    
+#Route: Plan auswählen
+@app.route('/select_plan', methods=['GET', 'POST'])
+@login_required
+def select_plan():
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    # Trainingspläne aus der Datenbank abrufen
+    cur.execute('SELECT id, name FROM plans;')
+    plans = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    if request.method == 'POST':
+        selected_plan_id = request.form['plan_id']
+        return redirect(url_for('track_plan', plan_id=selected_plan_id))
+
+    return render_template('select_plan.html', plans=[{'id': p[0], 'name': p[1]} for p in plans])
+    
+    
 
 
 # **Route: Fortschritte anzeigen (geschützt)**
@@ -211,26 +238,8 @@ def progress():
 
     return render_template('progress.html', sessions=sessions)
 
-
-#Route: Plan auswählen
-@app.route('/select_plan', methods=['GET', 'POST'])
-@login_required
-def select_plan():
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-    # Trainingspläne aus der Datenbank abrufen
-    cur.execute('SELECT id, name FROM plans;')
-    plans = cur.fetchall()
-
-    cur.close()
-    conn.close()
-
-    if request.method == 'POST':
-        selected_plan_id = request.form['plan_id']
-        return redirect(url_for('track_plan', plan_id=selected_plan_id))
-
-    return render_template('select_plan.html', plans=[{'id': p[0], 'name': p[1]} for p in plans])
+    
+    
 
 #Training tracken
 @app.route('/track_plan/<int:plan_id>', methods=['GET', 'POST'])
