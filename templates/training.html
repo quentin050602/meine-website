@@ -5,119 +5,138 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trainingspläne</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
+        /* 🌟 Allgemeine Stile */
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f0f0f5;
+            background: linear-gradient(135deg, #2C3E50, #4CA1AF);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
         }
 
-        .content {
-            max-width: 900px;
-            margin: 50px auto;
-            background: linear-gradient(to right, #ffffff, #f7f7fa);
+        /* 🌟 Haupt-Container */
+        .container {
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.1);
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
         }
 
         h1 {
-            text-align: center;
-            color: #2d2d86;
-            font-size: 2.5em;
-            text-transform: uppercase;
-            margin-bottom: 20px;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #ffffff;
         }
 
         h2 {
-            color: #3d3d99;
-            margin-top: 30px;
-            border-bottom: 2px solid #007BFF;
+            font-size: 1.6rem;
+            color: #b0e0e6;
+            border-bottom: 2px solid #b0e0e6;
             padding-bottom: 5px;
+            margin-top: 25px;
+            margin-bottom: 15px;
         }
 
         p {
-            text-align: center;
-            font-size: 1.2em;
-            line-height: 1.8;
-            color: #555;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
         }
 
-        a {
-            display: inline-block;
-            text-align: center;
-            margin: 15px auto;
-            padding: 12px 25px;
-            font-size: 1.1em;
+        /* 🌟 Button-Container */
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            font-size: 17px;
             font-weight: bold;
-            background-color: #007BFF;
+            color: white;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.3);
+        }
+
+        .button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(90deg, #2980b9, #1c6ea4);
+            box-shadow: 0 8px 16px rgba(52, 152, 219, 0.4);
+        }
+
+        .button i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        /* 🌟 Logout */
+        .logout {
+            margin-top: 20px;
+        }
+
+        .logout a {
             color: white;
             text-decoration: none;
-            border-radius: 25px;
-            transition: transform 0.3s ease, background-color 0.3s ease;
-        }
-        
-        a:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
+            font-weight: bold;
+            transition: color 0.3s ease;
         }
 
-        .content img {
-            width: 100%;
-            max-height: 300px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .footer-buttons {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .footer-buttons a {
-            display: inline-block;
-            padding: 8px 20px; /* Kleinere Knöpfe */
-            font-size: 0.9em;
-            background-color: #000;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 0.9em;
-            color: #888;
+        .logout a:hover {
+            color: #ffcc00;
         }
     </style>
 </head>
 <body>
-    <div class="content">
-        <h1>Trainingspläne</h1>
-        <img src="{{ url_for('static', filename='images/training-banner.jpg') }}" alt="Trainingspläne Banner">
-        <p>Hier findest du alle verfügbaren Trainingspläne, die dich auf deinem Fitnessweg unterstützen. Wähle den Plan, der am besten zu dir passt, und starte dein Training heute!</p>
-        
-        <h2>Ganzkörper (2-3 Trainingseinheiten / Woche)</h2>
-        <a href="{{ url_for('download_file', filename='GKAnfänger.pdf') }}" download>Anfänger-Trainingsplan</a>
-        <a href="{{ url_for('download_file', filename='GKFortgeschrittene.pdf') }}" download>Fortgeschrittene-Trainingsplan</a>
+    <div class="container">
+        <h1>🏋️‍♂️ Trainingspläne</h1>
+        <p>Hier findest du verschiedene Trainingspläne für dein Fitnessziel. Wähle den passenden Plan und starte durch!</p>
 
-        <h2>Oberkörper-Unterkörper Split (4 Trainingseinheiten / Woche)</h2>
-        <a href="{{ url_for('download_file', filename='OKUKAnfänger.pdf') }}" download>Anfänger-Trainingsplan</a>
-        <a href="{{ url_for('download_file', filename='OKUKFortgeschrittene.pdf') }}" download>Fortgeschrittene-Trainingsplan</a>
+        <img src="{{ url_for('static', filename='images/training-banner.jpg') }}" alt="Trainingspläne Banner" style="width:100%; border-radius:10px; margin-bottom:20px;">
 
-        <h2>Push-Pull-Legs (6 Trainingseinheiten / Woche)</h2>
-        <a href="{{ url_for('download_file', filename='PPLAnfänger.pdf') }}" download>Anfänger-Trainingsplan</a>
-        <a href="{{ url_for('download_file', filename='PPLFortgeschrittene.pdf') }}" download>Fortgeschrittene-Trainingsplan</a>
-
-        
-        <div class="footer-buttons">
-            <a href="/" target="_blank">Zurück zur Startseite</a>
-            <a href="/nutrition" target="_blank">Zu den Ernährungsplänen</a>
+        <!-- Ganzkörper Training -->
+        <h2>💪 Ganzkörper (2-3x pro Woche)</h2>
+        <div class="button-container">
+            <a href="{{ url_for('download_file', filename='GKAnfänger.pdf') }}" class="button" download><i class="fas fa-dumbbell"></i> Anfänger</a>
+            <a href="{{ url_for('download_file', filename='GKFortgeschrittene.pdf') }}" class="button" download><i class="fas fa-dumbbell"></i> Fortgeschritten</a>
         </div>
 
-        <footer>&copy; 2025 Trainingspläne. Dein Weg zu einem fitteren Leben.</footer>
+        <!-- Oberkörper-Unterkörper Split -->
+        <h2>🏃‍♂️ Oberkörper-Unterkörper Split (4x pro Woche)</h2>
+        <div class="button-container">
+            <a href="{{ url_for('download_file', filename='OKUKAnfänger.pdf') }}" class="button" download><i class="fas fa-running"></i> Anfänger</a>
+            <a href="{{ url_for('download_file', filename='OKUKFortgeschrittene.pdf') }}" class="button" download><i class="fas fa-running"></i> Fortgeschritten</a>
+        </div>
+
+        <!-- Push-Pull-Legs -->
+        <h2>🔥 Push-Pull-Legs (6x pro Woche)</h2>
+        <div class="button-container">
+            <a href="{{ url_for('download_file', filename='PPLAnfänger.pdf') }}" class="button" download><i class="fas fa-fire"></i> Anfänger</a>
+            <a href="{{ url_for('download_file', filename='PPLFortgeschrittene.pdf') }}" class="button" download><i class="fas fa-fire"></i> Fortgeschritten</a>
+        </div>
+
+        <div class="logout">
+            <a href="/"><i class="fas fa-arrow-left"></i> Zurück zur Startseite</a>
+        </div>
     </div>
 </body>
 </html>
-
 
