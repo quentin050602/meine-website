@@ -14,6 +14,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            flex-direction: column;
         }
 
         .container {
@@ -30,10 +31,53 @@
             color: #007BFF;
         }
 
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        select, input {
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            font-size: 18px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            margin-top: 20px;
         }
 
         th, td {
@@ -47,19 +91,22 @@
             color: white;
         }
 
-        .result {
-            font-size: 18px;
-            margin-top: 20px;
+        .error {
+            color: red;
             font-weight: bold;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Kalorienrechner</h1>
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
         <form method="post">
             <label for="gender">Geschlecht:</label>
-            <select name="gender" id="gender">
+            <select name="gender" id="gender" required>
                 <option value="male">Männlich</option>
                 <option value="female">Weiblich</option>
             </select>
@@ -72,6 +119,24 @@
 
             <label for="height">Größe (cm):</label>
             <input type="number" name="height" id="height" required>
+
+            <label for="job_activity">Berufliche Aktivität:</label>
+            <select name="job_activity" id="job_activity" required>
+                <option value="sedentary">Bürojob, kaum Bewegung</option>
+                <option value="lightly_active">Leichte Bewegung (z. B. Lehrer, Verkäufer)</option>
+                <option value="moderately_active">Handwerker, Kellner</option>
+                <option value="very_active">Bauarbeiter, Landwirt</option>
+                <option value="extremely_active">Leistungssportler, Schwerstarbeit</option>
+            </select>
+
+            <label for="sport_frequency">Sportliche Aktivität:</label>
+            <select name="sport_frequency" id="sport_frequency" required>
+                <option value="none">Kein Sport</option>
+                <option value="light">Leicht (1-2x Woche)</option>
+                <option value="moderate">Mittel (3-4x Woche)</option>
+                <option value="heavy">Intensiv (5-6x Woche)</option>
+                <option value="extreme">Extrem (Täglich)</option>
+            </select>
 
             <button type="submit">Berechnen</button>
         </form>
@@ -114,6 +179,8 @@
             </table>
         {% endif %}
     </div>
+    <a class="home-btn" href="{{ url_for('home') }}">Zurück zur Startseite</a>
+
 </body>
 </html>
 

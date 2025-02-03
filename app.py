@@ -117,8 +117,8 @@ def calculate_tdee(gender, age, weight, height, job_activity, sport_frequency):
 
     # Makronährstoffverteilung (30% Eiweiß, 25% Fett, 45% Kohlenhydrate)
     def calculate_macros(calories):
-        protein = (calories * 0.30) / 4  # Eiweiß: 4 kcal/g
-        fat = (calories * 0.25) / 9  # Fett: 9 kcal/g
+        protein = (calories * 0.25) / 4  # Eiweiß: 4 kcal/g
+        fat = (calories * 0.3) / 9  # Fett: 9 kcal/g
         carbs = (calories * 0.45) / 4  # Kohlenhydrate: 4 kcal/g
         return round(protein, 1), round(fat, 1), round(carbs, 1)
 
