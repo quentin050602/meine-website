@@ -5,55 +5,113 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fitness-Website</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
+        /* 🌟 Allgemeine Stile */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background: linear-gradient(135deg, #2C3E50, #4CA1AF);
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            text-align: center;
         }
 
+        /* 🌟 Haupt-Container */
         .container {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            max-width: 420px;
             text-align: center;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* 🌟 Button-Container */
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
 
         .button {
-            display: inline-block;
-            margin: 10px;
-            padding: 15px 30px;
-            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            font-size: 17px;
+            font-weight: bold;
             color: white;
-            background-color: #007BFF;
+            background: linear-gradient(90deg, #3498db, #2980b9);
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             text-decoration: none;
+            transition: all 0.3s ease-in-out;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.3);
         }
 
         .button:hover {
-            background-color: #0056b3;
+            transform: scale(1.05);
+            background: linear-gradient(90deg, #2980b9, #1c6ea4);
+            box-shadow: 0 8px 16px rgba(52, 152, 219, 0.4);
+        }
+
+        .button i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        /* 🌟 Logout */
+        .logout {
+            margin-top: 20px;
+        }
+
+        .logout a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .logout a:hover {
+            color: #ffcc00;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Willkommen!</h1>
-        <p>Auf dieser Seite findest du passende Trainingspläne, einen individuellen Ernährungsguide für deine Ziele und das Trainingstagebuch, mit dem du deine Einheiten im Gym tracken kannst. </p>
-        <a href="/training" class="button">Trainingspläne</a>
-        <a href="/nutrition" class="button">Ernährungsguide</a>
-        <a href="/add" class="button">Trainingstagebuch</a>
+        <h1>Willkommen auf deiner Fitness-Seite! 💪</h1>
+        <p>Finde hier die besten Trainingspläne, einen individuellen Ernährungsguide und tracke dein Workout im Trainingstagebuch.</p>
+
+        <div class="button-container">
+            <a href="/training" class="button"><i class="fas fa-dumbbell"></i> Trainingspläne</a>
+            <a href="/nutrition" class="button"><i class="fas fa-utensils"></i> Ernährungsguide</a>
+            <a href="/add" class="button"><i class="fas fa-clipboard-list"></i> Trainingstagebuch</a>
+        </div>
+
         <div class="logout">
-                   <a href="/logout">Abmelden</a>
+            <a href="/logout"><i class="fas fa-sign-out-alt"></i> Abmelden</a>
+        </div>
     </div>
 </body>
 </html>
+
 
