@@ -4,78 +4,113 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neuen Plan auswählen</title>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
+        /* 🌟 Allgemeine Stile */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
+            background: linear-gradient(135deg, #2C3E50, #4CA1AF);
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-        }
-
-        .container {
+            min-height: 100vh;
             text-align: center;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-            }
-        }
-
-        h1 {
-            text-align: center;
-            color: #007BFF;
-            margin-bottom: 20px;
-        }
-
-        form {
-            display: flex;
             flex-direction: column;
         }
 
-        label {
-            font-weight: bold;
+        /* 🌟 Haupt-Container */
+        .container {
+            max-width: 450px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 2.2rem;
             margin-bottom: 10px;
-            color: #333;
+            font-weight: bold;
+            color: #ffffff;
         }
 
-        select, button {
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
         }
-        
+
+        /* 🌟 Button-Container */
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
         .button {
-            display: inline-block;
-            margin: 10px;
-            padding: 15px 30px;
-            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            font-size: 17px;
+            font-weight: bold;
             color: white;
-            background-color: #007BFF;
+            background: linear-gradient(90deg, #3498db, #2980b9);
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             text-decoration: none;
+            transition: all 0.3s ease-in-out;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.3);
+        }
 
-     
-        
+        .button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(90deg, #2980b9, #1c6ea4);
+            box-shadow: 0 8px 16px rgba(52, 152, 219, 0.4);
+        }
 
-        button:hover {
-            background-color: #0056b3;
+        .button i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        /* 🌟 Logout */
+        .logout {
+            margin-top: 20px;
+        }
+
+        .logout a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .logout a:hover {
+            color: #ffcc00;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Willkommen!</h1>
-        <p>Waehle eine der folgenden Optionen:</p>
-        <a href="/select_plan" class="button">Training tracken</a>
-        <a href="/progress" class="button">Vergangene Trainings</a>
+        <h1>📌 Trainings-Tracker</h1>
+        <p>Wähle eine der folgenden Optionen:</p>
+
+        <div class="button-container">
+            <a href="/select_plan" class="button"><i class="fas fa-dumbbell"></i> Training tracken</a>
+            <a href="/progress" class="button"><i class="fas fa-chart-line"></i> Vergangene Trainings</a>
+        </div>
+
+        <div class="logout">
+            <a href="/"><i class="fas fa-arrow-left"></i> Zurück zur Startseite</a>
+        </div>
+    </div>
+</body>
+</html>
+
         

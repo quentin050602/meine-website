@@ -4,121 +4,184 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Training tracken</title>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
+        /* 🌟 Allgemeine Stile */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
+            background: linear-gradient(135deg, #2C3E50, #4CA1AF);
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            text-align: center;
+            flex-direction: column;
         }
 
+        /* 🌟 Haupt-Container */
         .container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            width: 100%;
             max-width: 600px;
-            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
         }
 
         h1 {
-            color: #007BFF;
-            margin-bottom: 20px;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #ffffff;
         }
 
         form {
             display: flex;
             flex-direction: column;
             align-items: center;
+            width: 100%;
         }
 
         label {
             font-weight: bold;
             margin-bottom: 5px;
-            color: #333;
+            color: white;
         }
 
         input, select {
             padding: 10px;
             margin-bottom: 15px;
-            border: 1px solid #ccc;
+            border: none;
             border-radius: 5px;
             font-size: 16px;
             width: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-align: center;
+            outline: none;
+        }
+
+        input::placeholder {
+            color: white;
+            opacity: 0.8;
+        }
+
+        /* 🌟 Tabelle */
+        .table-container {
+            width: 100%;
+            overflow-x: auto; /* Scrollt horizontal, falls nötig */
+            margin-top: 20px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
         }
 
         th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
+            padding: 12px;
             text-align: center;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         th {
-            background-color: #007BFF;
-            color: white;
+            background-color: rgba(255, 255, 255, 0.3);
         }
 
-        button {
-            padding: 10px;
-            background-color: #007BFF;
+        /* 🌟 Buttons */
+        .button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            font-size: 17px;
+            font-weight: bold;
             color: white;
+            background: linear-gradient(90deg, #3498db, #2980b9);
             border: none;
-            border-radius: 5px;
-            font-size: 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease-in-out;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.3);
             width: 100%;
-            margin-top: 10px;
+            margin-top: 15px;
         }
 
-        button:hover {
-            background-color: #0056b3;
+        .button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(90deg, #2980b9, #1c6ea4);
+            box-shadow: 0 8px 16px rgba(52, 152, 219, 0.4);
+        }
+
+        .button i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .logout {
+            margin-top: 20px;
+        }
+
+        .logout a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .logout a:hover {
+            color: #ffcc00;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Training tracken</h1>
+        <h1>🏋️‍♂️ Training tracken</h1>
         <form method="post">
-            <label for="date">Datum:</label>
+            <label for="date">📅 Datum:</label>
             <input type="date" name="date" id="date" required value="{{ today_date }}">
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Übung</th>
-                        <th>Sätze</th>
-                        <th>Wiederholungen</th>
-                        <th>Gewicht (kg)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for exercise in exercises %}
-                    <tr>
-                        <td>{{ exercise[1] }}</td>
-                        <td><input type="number" name="sets_{{ exercise[0] }}" min="1" required></td>
-                        <td><input type="number" name="reps_{{ exercise[0] }}" min="1" required></td>
-                        <td><input type="number" name="weight_{{ exercise[0] }}" step="0.1" min="0" required></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <button type="submit">Training abschließen</button>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Übung</th>
+                            <th>Sätze</th>
+                            <th>Wiederholungen</th>
+                            <th>Gewicht (kg)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for exercise in exercises %}
+                        <tr>
+                            <td>{{ exercise[1] }}</td>
+                            <td><input type="number" name="sets_{{ exercise[0] }}" min="1" required></td>
+                            <td><input type="number" name="reps_{{ exercise[0] }}" min="1" required></td>
+                            <td><input type="number" name="weight_{{ exercise[0] }}" step="0.1" min="0" required></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <button class="button" type="submit"><i class="fas fa-check"></i> Training abschließen</button>
         </form>
+
+        <div class="logout">
+            <a href="/"><i class="fas fa-arrow-left"></i> Zurück zur Startseite</a>
+        </div>
     </div>
 </body>
 </html>
+
 
 
 

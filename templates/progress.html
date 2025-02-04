@@ -4,110 +4,161 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trainingsfortschritt</title>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
+        /* 🌟 Allgemeine Stile */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
+            background: linear-gradient(135deg, #2C3E50, #4CA1AF);
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            text-align: center;
             flex-direction: column;
         }
 
+        /* 🌟 Haupt-Container */
         .container {
-            background: white;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.1);
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 600px;
-            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
         }
 
         h1 {
-            color: #007BFF;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        /* 🌟 Tabelle */
+        .table-container {
+            width: 100%;
+            overflow-x: auto; /* Scrollt horizontal, falls nötig */
+            margin-top: 20px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
         }
 
         th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
+            padding: 12px;
             text-align: center;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         th {
-            background-color: #007BFF;
-            color: white;
+            background-color: rgba(255, 255, 255, 0.3);
         }
 
-        a, button {
-            display: inline-block;
-            padding: 10px;
-            margin: 10px;
-            font-size: 16px;
+        /* 🌟 Buttons */
+        .button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            font-size: 17px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(90deg, #3498db, #2980b9);
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             text-decoration: none;
+            transition: all 0.3s ease-in-out;
             cursor: pointer;
+            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.3);
+            margin-top: 15px;
+        }
+
+        .button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(90deg, #2980b9, #1c6ea4);
+            box-shadow: 0 8px 16px rgba(52, 152, 219, 0.4);
+        }
+
+        .button i {
+            margin-right: 10px;
+            font-size: 18px;
         }
 
         .details-btn {
-            background-color: #28a745;
+            display: inline-block;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: bold;
             color: white;
+            background: linear-gradient(90deg, #28a745, #218838);
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease-in-out;
         }
 
         .details-btn:hover {
-            background-color: #218838;
+            transform: scale(1.05);
+            background: linear-gradient(90deg, #218838, #1a6c2c);
         }
 
-        .home-btn {
-            background-color: #007BFF;
+        .logout {
+            margin-top: 20px;
+        }
+
+        .logout a {
             color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
         }
 
-        .home-btn:hover {
-            background-color: #0056b3;
+        .logout a:hover {
+            color: #ffcc00;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Dein Trainingsfortschritt</h1>
+        <h1>📈 Dein Trainingsfortschritt</h1>
 
         {% if sessions %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Trainingsplan</th>
-                        <th>Datum</th>
-                        <th>Details</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for session in sessions %}
-                    <tr>
-                        <td>{{ session[1] }}</td>
-                        <td>{{ session[2] }}</td>
-                        <td>
-                            <a class="details-btn" href="{{ url_for('session_details', session_id=session[0]) }}">Details</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trainingsplan</th>
+                            <th>Datum</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for session in sessions %}
+                        <tr>
+                            <td>{{ session[1] }}</td>
+                            <td>{{ session[2] }}</td>
+                            <td>
+                                <a class="details-btn" href="{{ url_for('session_details', session_id=session[0]) }}"><i class="fas fa-info-circle"></i> Details</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         {% else %}
             <p>Keine vergangenen Trainings gefunden.</p>
         {% endif %}
 
-        <a class="home-btn" href="{{ url_for('home') }}">Zurück zur Startseite</a>
+        <a class="button" href="{{ url_for('home') }}"><i class="fas fa-arrow-left"></i> Zurück zur Startseite</a>
     </div>
 </body>
 </html>
