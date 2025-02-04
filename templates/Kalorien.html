@@ -4,31 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kalorienrechner</title>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
+        /* 🌟 Allgemeine Stile */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
+            background: linear-gradient(135deg, #2C3E50, #4CA1AF);
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            text-align: center;
             flex-direction: column;
         }
 
+        /* 🌟 Haupt-Container */
         .container {
-            background: white;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.1);
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 600px;
-            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
         }
 
         h1 {
-            color: #007BFF;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #ffffff;
         }
 
         form {
@@ -40,55 +48,88 @@
         label {
             font-weight: bold;
             margin-top: 10px;
+            font-size: 1rem;
         }
 
         select, input {
-            padding: 8px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            width: 100%;
-        }
-
-        button {
             padding: 10px;
-            background-color: #007BFF;
-            color: white;
+            margin-top: 5px;
             border: none;
             border-radius: 5px;
             font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
             width: 100%;
-            margin-top: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-align: center;
+            outline: none;
         }
 
-        button:hover {
-            background-color: #0056b3;
+        select option {
+            color: black;
         }
 
-        .result {
+        /* 🌟 Buttons */
+        .button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            font-size: 17px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.3);
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(90deg, #2980b9, #1c6ea4);
+            box-shadow: 0 8px 16px rgba(52, 152, 219, 0.4);
+        }
+
+        .button i {
+            margin-right: 10px;
             font-size: 18px;
+        }
+
+        /* 🌟 Ergebnisbereich */
+        .result {
+            font-size: 1.2rem;
             margin-top: 20px;
             font-weight: bold;
+        }
+
+        /* 🌟 Tabelle - Anpassung für responsive Darstellung */
+        .table-container {
+            width: 100%;
+            overflow-x: auto; /* Automatisches horizontales Scrollen bei kleineren Bildschirmen */
+            margin-top: 20px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
         }
 
         th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
+            padding: 12px;
             text-align: center;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         th {
-            background-color: #007BFF;
-            color: white;
+            background-color: rgba(255, 255, 255, 0.3);
         }
 
         .error {
@@ -96,11 +137,26 @@
             font-weight: bold;
             margin-top: 10px;
         }
+
+        .logout {
+            margin-top: 20px;
+        }
+
+        .logout a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .logout a:hover {
+            color: #ffcc00;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Kalorienrechner</h1>
+        <h1>📊 Kalorienrechner</h1>
         {% if error %}
             <p class="error">{{ error }}</p>
         {% endif %}
@@ -122,11 +178,11 @@
 
             <label for="job_activity">Berufliche Aktivität:</label>
             <select name="job_activity" id="job_activity" required>
-                <option value="sedentary">Bürojob, kaum Bewegung</option>
-                <option value="lightly_active">Leichte Bewegung (z. B. Lehrer, Verkäufer)</option>
-                <option value="moderately_active">Handwerker, Kellner</option>
-                <option value="very_active">Bauarbeiter, Landwirt</option>
-                <option value="extremely_active">Leistungssportler, Schwerstarbeit</option>
+                <option value="sedentary">kaum Bewegung (Bürojob)</option>
+                <option value="lightly_active">leichte Bewegung (Lehrer, Verkäufer)</option>
+                <option value="moderately_active"> viel Bewegung (Handwerker, Kellner)</option>
+                <option value="very_active"> viel & intensive Bewegung (Bauarbeiter, Landwirt)</option>
+                <option value="extremely_active">Leistungssportler</option>
             </select>
 
             <label for="sport_frequency">Sportliche Aktivität:</label>
@@ -138,51 +194,56 @@
                 <option value="extreme">Extrem (Täglich)</option>
             </select>
 
-            <button type="submit">Berechnen</button>
+            <button class="button" type="submit"><i class="fas fa-calculator"></i> Berechnen</button>
         </form>
 
         {% if result %}
             <h2>Dein Kalorienbedarf:</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Phase</th>
-                        <th>Kalorien</th>
-                        <th>Eiweiß (g)</th>
-                        <th>Fett (g)</th>
-                        <th>Kohlenhydrate (g)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Erhaltung</td>
-                        <td>{{ result.tdee }}</td>
-                        <td>{{ result.maintain_macros[0] }}</td>
-                        <td>{{ result.maintain_macros[1] }}</td>
-                        <td>{{ result.maintain_macros[2] }}</td>
-                    </tr>
-                    <tr>
-                        <td>Bulk (+300 kcal)</td>
-                        <td>{{ result.bulk_calories }}</td>
-                        <td>{{ result.bulk_macros[0] }}</td>
-                        <td>{{ result.bulk_macros[1] }}</td>
-                        <td>{{ result.bulk_macros[2] }}</td>
-                    </tr>
-                    <tr>
-                        <td>Diät (-300 kcal)</td>
-                        <td>{{ result.diet_calories }}</td>
-                        <td>{{ result.diet_macros[0] }}</td>
-                        <td>{{ result.diet_macros[1] }}</td>
-                        <td>{{ result.diet_macros[2] }}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phase</th>
+                            <th>Kalorien</th>
+                            <th>Eiweiß (g)</th>
+                            <th>Fett (g)</th>
+                            <th>Kohlenhydrate (g)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Erhaltung</td>
+                            <td>{{ result.tdee }}</td>
+                            <td>{{ result.maintain_macros[0] }}</td>
+                            <td>{{ result.maintain_macros[1] }}</td>
+                            <td>{{ result.maintain_macros[2] }}</td>
+                        </tr>
+                        <tr>
+                            <td>Bulk (+300 kcal)</td>
+                            <td>{{ result.bulk_calories }}</td>
+                            <td>{{ result.bulk_macros[0] }}</td>
+                            <td>{{ result.bulk_macros[1] }}</td>
+                            <td>{{ result.bulk_macros[2] }}</td>
+                        </tr>
+                        <tr>
+                            <td>Diät (-300 kcal)</td>
+                            <td>{{ result.diet_calories }}</td>
+                            <td>{{ result.diet_macros[0] }}</td>
+                            <td>{{ result.diet_macros[1] }}</td>
+                            <td>{{ result.diet_macros[2] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         {% endif %}
     </div>
-    <a class="home-btn" href="{{ url_for('home') }}">Zurück zur Startseite</a>
-
+    <div class="logout">
+        <a href="/">🏠 Zurück zur Startseite</a>
+    </div>
 </body>
 </html>
+
+
 
 
 
