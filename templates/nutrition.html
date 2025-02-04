@@ -5,59 +5,106 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ernährungspläne</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
+        /* 🌟 Allgemeine Stile */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background: linear-gradient(135deg, #2C3E50, #4CA1AF);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
         }
 
-        .content {
-            max-width: 800px;
-            margin: 50px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        /* 🌟 Haupt-Container */
+        .container {
+            max-width: 450px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
         }
 
         h1 {
-            text-align: center;
-            color: #333;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #ffffff;
         }
 
         p {
-            text-align: center;
-            font-size: 18px;
-            line-height: 1.6;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
         }
 
-        a {
-            display: block;
-            text-align: center;
-            margin: 20px auto;
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #007BFF;
+        /* 🌟 Button-Container */
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            font-size: 17px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.3);
+        }
+
+        .button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(90deg, #2980b9, #1c6ea4);
+            box-shadow: 0 8px 16px rgba(52, 152, 219, 0.4);
+        }
+
+        .button i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        /* 🌟 Logout */
+        .logout {
+            margin-top: 20px;
+        }
+
+        .logout a {
             color: white;
             text-decoration: none;
-            border-radius: 5px;
-            max-width: 200px;
+            font-weight: bold;
+            transition: color 0.3s ease;
         }
 
-        a:hover {
-            background-color: #0056b3;
+        .logout a:hover {
+            color: #ffcc00;
         }
     </style>
 </head>
 <body>
-    <div class="content">
-        <h1>Ernährungspläne</h1>
-        <p>Hier findest du personalisierte Ernährungspläne, die dich auf deinem Weg zu einem gesunden Lebensstil unterstützen.</p>
-        <a href="/Kalorien"> Meine Kalorien berechnen </a>
-        <a href="/">Zurück zur Startseite</a>
-        
+    <div class="container">
+        <h1>🥗 Ernährungspläne</h1>
+        <p>Hier findest du einige Tools zur Optimierung deiner Ernährung, um dein Training und deine Gesundheit auf das nächste Level zu bringen.</p>
+
+        <div class="button-container">
+            <a href="/Kalorien" class="button"><i class="fas fa-calculator"></i> Meine Kalorien berechnen</a>
+            <a href="/" class="button"><i class="fas fa-arrow-left"></i> Zurück zur Startseite</a>
+        </div>
     </div>
 </body>
 </html>
