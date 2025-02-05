@@ -44,7 +44,7 @@
             border-bottom: 2px solid #b0e0e6;
             padding-bottom: 5px;
             margin-top: 25px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         p {
@@ -53,42 +53,61 @@
             line-height: 1.5;
         }
 
-        /* 🌟 Button-Container */
-        .button-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .button {
-            display: flex;
+        /* 🌟 Button-Stil */
+        .button, .button-download {
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 15px;
+            padding: 12px 15px;
             font-size: 17px;
             font-weight: bold;
             color: white;
-            background: linear-gradient(90deg, #3498db, #2980b9);
             border: none;
             border-radius: 8px;
             text-decoration: none;
             transition: all 0.3s ease-in-out;
             cursor: pointer;
             box-shadow: 0 4px 6px rgba(52, 152, 219, 0.3);
+            margin-right: 10px;
+        }
+
+        .button {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+        }
+
+        .button-download {
+            background: linear-gradient(90deg, #34495e, #2c3e50);
         }
 
         .button:hover {
             transform: scale(1.05);
             background: linear-gradient(90deg, #2980b9, #1c6ea4);
-            box-shadow: 0 8px 16px rgba(52, 152, 219, 0.4);
         }
 
-        .button i {
-            margin-right: 10px;
-            font-size: 18px;
+        .button-download:hover {
+            background: linear-gradient(90deg, #2c3e50, #1a252f);
         }
 
-        /* 🌟 Logout */
+        .button i, .button-download i {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        /* 🌟 Button-Gruppen mit Abstand */
+        .button-group {
+            margin-bottom: 25px;
+        }
+
+        /* 🌟 Trennlinie */
+        .separator {
+            width: 80%;
+            height: 2px;
+            background-color: rgba(255, 255, 255, 0.2);
+            margin: 30px auto;
+            border-radius: 5px;
+        }
+
+        /* 🌟 Logout (Startseite) Button */
         .logout {
             margin-top: 20px;
         }
@@ -98,9 +117,14 @@
             text-decoration: none;
             font-weight: bold;
             transition: color 0.3s ease;
+            display: inline-block;
+            padding: 12px 18px;
+            border-radius: 8px;
+            background: linear-gradient(90deg, #34495e, #2c3e50);
         }
 
         .logout a:hover {
+            background: linear-gradient(90deg, #2c3e50, #1a252f);
             color: #ffcc00;
         }
     </style>
@@ -114,27 +138,42 @@
 
         <!-- Ganzkörper Training -->
         <h2>💪 Ganzkörper (2-3x pro Woche)</h2>
-        <p>Ganzkörperpläne sind vor allem für Gym-Anfänger und Menschen gedacht, die höchstens 2-3 mal in der Woche Zeit für Training haben. Der Plan für Fortgeschrittene legt in jedem Training einen etwas anderen Fokus, um so gezielt mehr Volumen auf einzelne Muskelgruppen zu konzentrieren. </p>
+        <p>Perfekt für Gym-Anfänger oder Personen, die nur 2-3 Mal pro Woche trainieren können.</p>
 
-        <div class="button-container">
-            <a href="{{ url_for('download_file', filename='GKAnfänger.pdf') }}" class="button" download><i class="fas fa-dumbbell"></i> Anfänger</a>
-            <a href="{{ url_for('download_file', filename='GKFortgeschrittene.pdf') }}" class="button" download><i class="fas fa-dumbbell"></i> Fortgeschritten</a>
+        <div class="button-group">
+            <a href="{{ url_for('gk_anfaenger') }}" class="button"><i class="fas fa-eye"></i> Anfänger</a>
+            <a href="{{ url_for('download_file', filename='GKAnfänger.pdf') }}" class="button-download" download><i class="fas fa-download"></i> Download</a>
         </div>
+        <div class="button-group">
+            <a href="{{ url_for('gk_fortgeschrittene') }}" class="button"><i class="fas fa-eye"></i> Fortgeschritten</a>
+            <a href="{{ url_for('download_file', filename='GKFortgeschrittene.pdf') }}" class="button-download" download><i class="fas fa-download"></i> Download</a>
+        </div>
+
+        <div class="separator"></div>
 
         <!-- Oberkörper-Unterkörper Split -->
         <h2>🏃‍♂️ Oberkörper-Unterkörper Split (4x pro Woche)</h2>
-        <p> Der Oberkörper-Unterkörper Split ist perfekt für Menschen geeignet, die 4 mal in der Woche trainineren möchten und die Zeit pro Einheit relativ gering halten möchten. Der Anfängerplan beinhaltet ein Oberkörper- und ein Unterkörperplan, der Fortgeschrittenenplan beinhaltet je eine A und B Version, um den Fokus in den wöchentlichen Einheiten zu verlagern.</p>
-        <div class="button-container">
-            <a href="{{ url_for('download_file', filename='OKUKAnfänger.pdf') }}" class="button" download><i class="fas fa-running"></i> Anfänger</a>
-            <a href="{{ url_for('download_file', filename='OKUKFortgeschrittene.pdf') }}" class="button" download><i class="fas fa-running"></i> Fortgeschritten</a>
+        <p>Optimal für alle, die 4-mal pro Woche trainieren möchten.</p>
+
+        <div class="button-group">
+            <a href="{{ url_for('okuk_anfaenger') }}" class="button"><i class="fas fa-eye"></i> Anfänger</a>
+            <a href="{{ url_for('download_file', filename='OKUKAnfänger.pdf') }}" class="button-download" download><i class="fas fa-download"></i> Download</a>
         </div>
+        <div class="button-group">
+            <a href="{{ url_for('okuk_fortgeschrittene') }}" class="button"><i class="fas fa-eye"></i> Fortgeschritten</a>
+            <a href="{{ url_for('download_file', filename='OKUKFortgeschrittene.pdf') }}" class="button-download" download><i class="fas fa-download"></i> Download</a>
+        </div>
+
+        <div class="separator"></div>
 
         <!-- Push-Pull-Legs -->
         <h2>🔥 Push-Pull-Legs (6x pro Woche)</h2>
-        <p> Der Push-Pull-Legs Plan ist für fortgeschrittene Athleten geeignet die Zeit und Motivation für ganze 6 Einheiten pro Woche haben. Durch die Aufteilung in 3 verschiedene Trainingseinheiten schafft dieser Plan viel Kapazität für ein großes Trainingsvolumen.</p>
-        <div class="button-container">
-            <a href="{{ url_for('download_file', filename='PPLAnfänger.pdf') }}" class="button" download><i class="fas fa-fire"></i>Fortgeschritten</a>
-                    </div>
+        <p>Für fortgeschrittene Athleten mit hohem Trainingsvolumen.</p>
+
+        <div class="button-group">
+            <a href="{{ url_for('ppl_anfaenger') }}" class="button"><i class="fas fa-eye"></i> Fortgeschritten</a>
+            <a href="{{ url_for('download_file', filename='PPLAnfänger.pdf') }}" class="button-download" download><i class="fas fa-download"></i> Download</a>
+        </div>
 
         <div class="logout">
             <a href="/"><i class="fas fa-arrow-left"></i> Zurück zur Startseite</a>
@@ -142,4 +181,7 @@
     </div>
 </body>
 </html>
+
+
+
 

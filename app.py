@@ -159,8 +159,6 @@ def Kalorien():
 
  
  
-
-
 # **Route: Startseite**
 @app.route('/')
 def home():
@@ -188,9 +186,34 @@ def nutrition():
     return render_template('nutrition.html')
     
     
+
+# **Route: GKAnfänger**
+@app.route('/gk_anfaenger')
+def gk_anfaenger():
+    return render_template('gk_anfaenger.html')
+    
+# **Route: GKFortgeschrittenr**
+@app.route('/gk_fortgeschrittene')
+def gk_fortgeschrittene():
+    return render_template('gk_fortgeschrittene.html')
     
     
+# **Route: OKUKAnfänger**
+@app.route('/okuk_anfaenger')
+def okuk_anfaenger():
+    return render_template('okuk_anfaenger.html')
     
+    
+# **Route: OKUKFortgeschritten**
+@app.route('/okuk_fortgeschrittene')
+def okuk_fortgeschrittene():
+    return render_template('okuk_fortgeschrittene.html')
+    
+# **Route: PPL**
+@app.route('/ppl_anfaenger')
+def ppl_anfaenger():
+    return render_template('ppl_anfaenger.html')
+
     
 #Route: Plan auswählen
 @app.route('/select_plan', methods=['GET', 'POST'])
