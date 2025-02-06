@@ -74,6 +74,7 @@ def download_file(filename):
         return "Datei nicht gefunden", 404
 
     return send_file(file_path, as_attachment=True)
+
     
     
 #Logik Kalorienrechner
@@ -175,6 +176,7 @@ def add():
 
 # **Route: Trainingspläne**
 @app.route('/training')
+@login_required
 def training():
     return render_template('training.html')
     
