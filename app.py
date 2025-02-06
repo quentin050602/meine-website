@@ -400,20 +400,23 @@ def login():
         conn.close()
 
         if user:
-            print(f"DEBUG: Benutzer {user[1]} gefunden mit ID {user[0]}")  # Debug-Ausgabe
+            print(f"DEBUG: Benutzer {user[1]} gefunden mit ID {user[0]}")  # Debugging
 
             if bcrypt.check_password_hash(user[2], password):
                 login_user(User(user[0], user[1], user[2]))
                 flash('Anmeldung erfolgreich.', 'success')
-                return redirect(url_for('progress'))
+
+                next_page = request.args.get('next')  # Prüfen, ob eine vorherige Seite angegeben wurde
+                return redirect(next_page) if next_page else redirect(url_for('home'))  # Falls keine, zur Startseite
             else:
                 flash('Falsches Passwort.', 'danger')
-                print("DEBUG: Passwort stimmt nicht überein!")  # Debug-Ausgabe
+                print("DEBUG: Passwort stimmt nicht überein!")  # Debugging
         else:
             flash('Benutzer existiert nicht.', 'danger')
-            print("DEBUG: Benutzer nicht gefunden!")  # Debug-Ausgabe
+            print("DEBUG: Benutzer nicht gefunden!")  # Debugging
 
     return render_template('login.html')
+
 
 # **Route: Logout**
 @app.route('/logout')
