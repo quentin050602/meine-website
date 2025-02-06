@@ -163,8 +163,8 @@
                         {% for exercise in exercises %}
                         <tr>
                             <td>{{ exercise[1] }}</td>
-                            <td><input type="number" name="sets_{{ exercise[0] }}" min="1" required></td>
-                            <td><input type="number" name="reps_{{ exercise[0] }}" min="1" required></td>
+                            <td><input type="number" name="sets_{{ exercise[0] }}" min="0" required></td>
+                            <td><input type="number" name="reps_{{ exercise[0] }}" min="0" required></td>
                             <td><input type="number" name="weight_{{ exercise[0] }}" step="0.1" min="0" required></td>
                         </tr>
                         {% endfor %}
