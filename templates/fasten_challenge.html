@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>40 Tage Fasten-Challenge</title>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1E3C72, #2A5298);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.12);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .day-counter {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            outline: none;
+            resize: none;
+        }
+
+        .checklist label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            margin: 5px 0;
+        }
+
+        .button {
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(90deg, #4CAF50, #388E3C);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .entry-box {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .back-home a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .back-home a:hover {
+            color: #ffcc00;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 40 Tage Fasten-Challenge</h1>
+        <div class="day-counter">Noch <span id="daysLeft">40</span> Tage!</div>
+
+        <form method="post">
+            <textarea name="journal_entry" placeholder="Wie lief dein Tag?" required></textarea>
+            <div class="checklist">
+                <h3>✅ Tagesziele:</h3>
+                <label><input type="checkbox" name="goal_alcohol_free"> Kein Alkohol</label>
+                <label><input type="checkbox" name="goal_healthy_food"> Gesund ernährt</label>
+                <label><input type="checkbox" name="goal_exercise"> Sport gemacht</label>
+                <label><input type="checkbox" name="goal_water"> 2 Liter Wasser</label>
+            </div>
+            <button class="button" type="submit">💾 Speichern</button>
+        </form>
+
+        <h2>📅 Deine Einträge:</h2>
+        {% for entry in entries %}
+            <div class="entry-box">
+                <strong>{{ entry[0] }}</strong>
+                <p>{{ entry[1] }}</p>
+                <p>✅ {{ "✔" if entry[2] else "❌" }} Kein Alkohol</p>
+                <p>🥗 {{ "✔" if entry[3] else "❌" }} Gesund gegessen</p>
+                <p>🏋️‍♂️ {{ "✔" if entry[4] else "❌" }} Sport gemacht</p>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
+
