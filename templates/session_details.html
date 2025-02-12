@@ -29,6 +29,7 @@
             border-radius: 15px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
+            margin-bottom: 30px;
         }
 
         h1 {
@@ -57,7 +58,7 @@
             background: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
             overflow: hidden;
-            margin-top: 15px;
+            margin-top: 10px;
         }
 
         th, td {
@@ -81,9 +82,17 @@
             font-weight: bold;
             color: #ffcc00;
             margin-bottom: 10px;
+            text-align: center;
         }
 
         /* 🌟 Buttons */
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+        }
+
         .button {
             padding: 12px;
             font-size: 16px;
@@ -95,27 +104,15 @@
             cursor: pointer;
             transition: all 0.3s ease-in-out;
             box-shadow: 0 4px 6px rgba(52, 152, 219, 0.3);
-            margin-top: 10px;
+            margin-top: 15px;
+            width: 250px;
+            text-align: center;
+            text-decoration: none;
         }
 
         .button:hover {
             transform: scale(1.05);
             background: linear-gradient(90deg, #2980b9, #1c6ea4);
-        }
-
-        .logout {
-            margin-top: 20px;
-        }
-
-        .logout a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.3s ease;
-        }
-
-        .logout a:hover {
-            color: #ffcc00;
         }
 
     </style>
@@ -161,8 +158,10 @@
             <p>Keine Details für diese Session gefunden.</p>
         {% endif %}
 
-        <a class="button" href="{{ url_for('progress') }}"><i class="fas fa-history"></i> Vergangene Trainingseinheiten</a>
-        <a class="button" href="{{ url_for('home') }}"><i class="fas fa-home"></i> Zurück zur Startseite</a>
+        <div class="button-container">
+            <a class="button" href="{{ url_for('progress') }}"><i class="fas fa-history"></i> Vergangene Trainingseinheiten</a>
+            <a class="button" href="{{ url_for('home') }}"><i class="fas fa-home"></i> Zurück zur Startseite</a>
+        </div>
     </div>
 </body>
 </html>
