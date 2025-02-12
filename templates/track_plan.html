@@ -23,7 +23,7 @@
 
         /* 🌟 Haupt-Container */
         .container {
-            max-width: 600px;
+            max-width: 700px;
             background: rgba(255, 255, 255, 0.1);
             padding: 30px;
             border-radius: 15px;
@@ -72,7 +72,7 @@
         /* 🌟 Tabelle */
         .table-container {
             width: 100%;
-            overflow-x: auto; /* Scrollt horizontal, falls nötig */
+            overflow-x: auto;
             margin-top: 20px;
         }
 
@@ -121,11 +121,6 @@
             box-shadow: 0 8px 16px rgba(52, 152, 219, 0.4);
         }
 
-        .button i {
-            margin-right: 10px;
-            font-size: 18px;
-        }
-
         .logout {
             margin-top: 20px;
         }
@@ -140,7 +135,29 @@
         .logout a:hover {
             color: #ffcc00;
         }
+
     </style>
+
+    <script>
+        function updateSets(exerciseId) {
+            let numSets = document.getElementById('sets_' + exerciseId).value;
+            let setsContainer = document.getElementById('sets_container_' + exerciseId);
+            setsContainer.innerHTML = '';
+
+            for (let i = 1; i <= numSets; i++) {
+                setsContainer.innerHTML += `
+                    <div>
+                        <label>Satz ${i} - Wiederholungen:</label>
+                        <input type="number" name="reps_${exerciseId}_${i}" min="1" required>
+
+                        <label>Gewicht (kg):</label>
+                        <input type="number" step="0.1" name="weight_${exerciseId}_${i}" min="0" required>
+                    </div>
+                `;
+            }
+        }
+    </script>
+
 </head>
 <body>
     <div class="container">
@@ -155,17 +172,17 @@
                         <tr>
                             <th>Übung</th>
                             <th>Sätze</th>
-                            <th>Wiederholungen</th>
-                            <th>Gewicht (kg)</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for exercise in exercises %}
                         <tr>
                             <td>{{ exercise[1] }}</td>
-                            <td><input type="number" name="sets_{{ exercise[0] }}" min="0" required></td>
-                            <td><input type="number" name="reps_{{ exercise[0] }}" min="0" required></td>
-                            <td><input type="number" name="weight_{{ exercise[0] }}" step="0.1" min="0" required></td>
+                            <td>
+                                <input type="number" id="sets_{{ exercise[0] }}" name="sets_{{ exercise[0] }}" value="3" min="1" max="10" onchange="updateSets({{ exercise[0] }})">
+                                <div id="sets_container_{{ exercise[0] }}"></div>
+                                <script>updateSets({{ exercise[0] }});</script>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -181,6 +198,7 @@
     </div>
 </body>
 </html>
+
 
 
 

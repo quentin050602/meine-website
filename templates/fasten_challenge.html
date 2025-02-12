@@ -124,7 +124,7 @@
 <body>
     <div class="container">
         <h1> 40 Tage Fasten-Challenge (3.März - 19.April) </h1>
-        <div class="day-counter"> Noch <span id="daysLeft">40</span> Tage!</div>
+        <div class="day-counter"> Noch <span id="daysLeft">40</span></div>
 
         <form method="post">
             <textarea name="journal_entry" placeholder="Wie lief dein Tag?" required></textarea>
@@ -169,12 +169,12 @@
 
     <script>
         function updateDaysLeft() {
-            const startDate = new Date("2025-03-03"); // Korrigiertes Startdatum
+            const startDate = new Date("2025-03-05"); // Korrigiertes Startdatum
             const endDate = new Date("2025-04-19"); // Enddatum der Challenge
             const today = new Date();
 
             if (today < startDate) {
-                document.getElementById("daysLeft").innerText = "Startet am 3. März!";
+                document.getElementById("daysLeft").innerText = "Startet am 5. März!";
             } else if (today > endDate) {
                 document.getElementById("daysLeft").innerText = "Challenge beendet 🎉!";
             } else {

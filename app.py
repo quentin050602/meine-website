@@ -328,44 +328,49 @@ def track_plan(plan_id):
     conn = get_db_connection()
     cur = conn.cursor()
 
-    # Übungen für den Plan abrufen
+    # Übungen für den ausgewählten Plan abrufen
     cur.execute('SELECT id, exercise_name FROM exercises WHERE plan_id = %s;', (plan_id,))
     exercises = cur.fetchall()
 
     if request.method == 'POST':
         date = request.form['date']
 
-        # Trainingssession speichern
+        # Neue Trainingssession erstellen
         cur.execute(
             'INSERT INTO training_sessions (user_id, plan_id, date) VALUES (%s, %s, %s) RETURNING id;',
             (current_user.id, plan_id, date)
         )
         session_id = cur.fetchone()[0]
 
-        # Trainingsdetails für jede Übung speichern
+        # 📌 Jetzt speichern wir **jeden Satz** individuell
         for exercise in exercises:
             exercise_id = exercise[0]
-            sets = request.form.get(f'sets_{exercise_id}')
-            reps = request.form.get(f'reps_{exercise_id}')
-            weight = request.form.get(f'weight_{exercise_id}')
+            num_sets = int(request.form.get(f'sets_{exercise_id}', 1))  # Standardwert: 1 Satz
 
-            cur.execute(
-                'INSERT INTO progress (session_id, exercise_id, sets, reps, weight) VALUES (%s, %s, %s, %s, %s);',
-                (session_id, exercise_id, sets, reps, weight)
-            )
+            for set_number in range(1, num_sets + 1):
+                reps = request.form.get(f'reps_{exercise_id}_{set_number}', 0)
+                weight = request.form.get(f'weight_{exercise_id}_{set_number}', 0)
 
-        conn.commit()  # WICHTIG: Speichert die Änderungen in der Datenbank
+                # Speichere die einzelnen Sätze in der Datenbank
+                cur.execute(
+                    '''INSERT INTO exercise_sets (session_id, exercise_id, set_number, reps, weight)
+                       VALUES (%s, %s, %s, %s, %s);''',
+                    (session_id, exercise_id, set_number, reps, weight)
+                )
+
+        conn.commit()
         cur.close()
         conn.close()
 
         flash('Training erfolgreich abgeschlossen!', 'success')
 
-        # ✅ Benutzer zur `progress`-Seite weiterleiten
+        # ✅ Nutzer nach Abschluss zur `progress` Seite weiterleiten
         return redirect(url_for('progress'))
 
     cur.close()
     conn.close()
     return render_template('track_plan.html', exercises=exercises, plan_id=plan_id)
+
 
 
 #Session details bei progress
@@ -375,7 +380,7 @@ def session_details(session_id):
     conn = get_db_connection()
     cur = conn.cursor()
 
-    # Informationen zur Trainingssession abrufen
+    # 📌 Infos zur Session abrufen (Datum & Planname)
     cur.execute('''
         SELECT ts.date, p.name
         FROM training_sessions ts
@@ -388,12 +393,13 @@ def session_details(session_id):
         flash('Keine Details für diese Session gefunden oder unberechtigter Zugriff.', 'danger')
         return redirect(url_for('progress'))
 
-    # Übungen und Fortschritte für diese Session abrufen
+    # 📌 Detaillierte Sätze für jede Übung abrufen
     cur.execute('''
-        SELECT e.exercise_name, pr.sets, pr.reps, pr.weight
-        FROM progress pr
-        JOIN exercises e ON pr.exercise_id = e.id
-        WHERE pr.session_id = %s;
+        SELECT e.exercise_name, es.set_number, es.reps, es.weight
+        FROM exercise_sets es
+        JOIN exercises e ON es.exercise_id = e.id
+        WHERE es.session_id = %s
+        ORDER BY e.exercise_name, es.set_number;
     ''', (session_id,))
     progress = cur.fetchall()
 
@@ -401,6 +407,7 @@ def session_details(session_id):
     conn.close()
 
     return render_template('session_details.html', session=session_info, progress=progress)
+
 
 
 
