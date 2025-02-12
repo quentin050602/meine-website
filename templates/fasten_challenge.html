@@ -6,6 +6,7 @@
     <title>40 Tage Fasten-Challenge</title>
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
+        /* 🌟 Allgemeine Stile */
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
@@ -20,6 +21,7 @@
             flex-direction: column;
         }
 
+        /* 🌟 Haupt-Container */
         .container {
             max-width: 500px;
             background: rgba(255, 255, 255, 0.12);
@@ -58,6 +60,12 @@
             resize: none;
         }
 
+        /* 🌟 Checkliste */
+        .checklist {
+            margin-top: 20px;
+            text-align: left;
+        }
+
         .checklist label {
             display: flex;
             align-items: center;
@@ -66,6 +74,13 @@
             margin: 5px 0;
         }
 
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #4CAF50;
+        }
+
+        /* 🌟 Button */
         .button {
             padding: 12px;
             font-size: 16px;
@@ -78,6 +93,12 @@
             transition: all 0.3s ease-in-out;
             width: 100%;
             margin-top: 15px;
+        }
+
+        .button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(90deg, #388E3C, #2E7D32);
+            box-shadow: 0 8px 16px rgba(76, 175, 80, 0.4);
         }
 
         .entry-box {
@@ -109,10 +130,12 @@
             <textarea name="journal_entry" placeholder="Wie lief dein Tag?" required></textarea>
             <div class="checklist">
                 <h3>✅ Tagesziele:</h3>
-                <label><input type="checkbox" name="goal_alcohol_free"> Kein Alkohol</label>
-                <label><input type="checkbox" name="goal_healthy_food"> Gesund ernährt</label>
-                <label><input type="checkbox" name="goal_exercise"> Sport gemacht</label>
-                <label><input type="checkbox" name="goal_water"> 2 Liter Wasser</label>
+                <label><input type="checkbox" name="goal_alcohol_free"> Kein Alkohol </label>
+                <label><input type="checkbox" name="goal_healthy_food"> Unter 50 Gramm Zucker </label>
+                <label><input type="checkbox" name="goal_water"> 3 Liter Wasser </label>
+                <label><input type="checkbox" name="goal_cardio"> 10.000 Schritte oder 30 min Cardio</label>
+                <label><input type="checkbox" name="goal_exercise"> Krafttraining </label>
+                <label><input type="checkbox" name="goal_reading"> 10 Seiten lesen </label>
             </div>
             <button class="button" type="submit">💾 Speichern</button>
         </form>
@@ -123,11 +146,34 @@
                 <strong>{{ entry[0] }}</strong>
                 <p>{{ entry[1] }}</p>
                 <p>✅ {{ "✔" if entry[2] else "❌" }} Kein Alkohol</p>
-                <p>🥗 {{ "✔" if entry[3] else "❌" }} Gesund gegessen</p>
-                <p>🏋️‍♂️ {{ "✔" if entry[4] else "❌" }} Sport gemacht</p>
+                <p>🥗 {{ "✔" if entry[3] else "❌" }} Unter 50 Gramm Zucker</p>
+                <p>💧 {{ "✔" if entry[4] else "❌" }} 3 Liter Wasser </p>
+                <p>👣 {{ "✔" if entry[5] else "❌" }} 10.000 Schritte / 30 min Cardio </p>
+                <p>🏋️‍♂️ {{ "✔" if entry[6] else "❌" }} Krafttraining </p>
+                <p>📚 {{ "✔" if entry[7] else "❌" }} 10 Seiten lesen </p>
             </div>
         {% endfor %}
     </div>
+
+    <script>
+        function updateDaysLeft() {
+            const startDate = new Date("2024-03-05"); // Startdatum der Challenge
+            const endDate = new Date("2024-04-19"); // Enddatum der Challenge
+            const today = new Date();
+
+            if (today < startDate) {
+                document.getElementById("daysLeft").innerText = "Startet am 5. März!";
+            } else if (today > endDate) {
+                document.getElementById("daysLeft").innerText = "Challenge beendet 🎉!";
+            } else {
+                const diffTime = endDate - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Differenz in Tagen
+                document.getElementById("daysLeft").innerText = diffDays + " Tage übrig!";
+            }
+        }
+        updateDaysLeft();
+    </script>
 </body>
 </html>
+
 

@@ -136,6 +136,7 @@ def calculate_tdee(gender, age, weight, height, job_activity, sport_frequency):
         "diet_macros": diet_macros
     }
 
+
 # **Route: Fasten-Challenge (Speichern & Anzeigen)**
 @app.route('/fasten_challenge', methods=['GET', 'POST'])
 @login_required
@@ -144,32 +145,36 @@ def fasten_challenge():
     cur = conn.cursor()
 
     if request.method == 'POST':
-        # Daten aus dem Formular abrufen
+        # 🌟 Daten aus dem Formular abrufen
         journal_entry = request.form['journal_entry']
         goal_alcohol_free = 'goal_alcohol_free' in request.form
         goal_healthy_food = 'goal_healthy_food' in request.form
-        goal_exercise = 'goal_exercise' in request.form
         goal_water = 'goal_water' in request.form
+        goal_cardio = 'goal_cardio' in request.form
+        goal_exercise = 'goal_exercise' in request.form
+        goal_reading = 'goal_reading' in request.form
 
-        # Eintrag in die Datenbank speichern
+        # 📝 Eintrag in die Datenbank speichern
         cur.execute(
-            '''INSERT INTO fasting_challenge (user_id, journal_entry, goal_alcohol_free, goal_healthy_food, goal_exercise, goal_water)
-               VALUES (%s, %s, %s, %s, %s, %s)''',
-            (current_user.id, journal_entry, goal_alcohol_free, goal_healthy_food, goal_exercise, goal_water)
+            '''INSERT INTO fasting_challenge (user_id, journal_entry, goal_alcohol_free, goal_healthy_food, goal_water, goal_cardio, goal_exercise, goal_reading, date)
+               VALUES (%s, %s, %s, %s, %s, %s, %s, %s, CURRENT_DATE)''',
+            (current_user.id, journal_entry, goal_alcohol_free, goal_healthy_food, goal_water, goal_cardio, goal_exercise, goal_reading)
         )
         conn.commit()
         flash("✅ Dein Eintrag wurde gespeichert!", "success")
 
-    # Vergangene Einträge abrufen
-    cur.execute('SELECT date, journal_entry, goal_alcohol_free, goal_healthy_food, goal_exercise, goal_water FROM fasting_challenge WHERE user_id = %s ORDER BY date DESC', (current_user.id,))
+    # 📅 Vergangene Einträge abrufen (neueste zuerst)
+    cur.execute(
+        '''SELECT date, journal_entry, goal_alcohol_free, goal_healthy_food, goal_water, goal_cardio, goal_exercise, goal_reading 
+           FROM fasting_challenge 
+           WHERE user_id = %s 
+           ORDER BY date DESC''', (current_user.id,))
     entries = cur.fetchall()
 
     cur.close()
     conn.close()
 
     return render_template('fasten_challenge.html', entries=entries)
-
-
 
 
 
