@@ -145,7 +145,6 @@ def fasten_challenge():
     cur = conn.cursor()
 
     if request.method == 'POST':
-        # 🌟 Daten aus dem Formular abrufen
         journal_entry = request.form['journal_entry']
         goal_alcohol_free = 'goal_alcohol_free' in request.form
         goal_healthy_food = 'goal_healthy_food' in request.form
@@ -154,7 +153,6 @@ def fasten_challenge():
         goal_exercise = 'goal_exercise' in request.form
         goal_reading = 'goal_reading' in request.form
 
-        # 📝 Eintrag in die Datenbank speichern
         cur.execute(
             '''INSERT INTO fasting_challenge (user_id, journal_entry, goal_alcohol_free, goal_healthy_food, goal_water, goal_cardio, goal_exercise, goal_reading, date)
                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, CURRENT_DATE)''',
@@ -163,7 +161,7 @@ def fasten_challenge():
         conn.commit()
         flash("✅ Dein Eintrag wurde gespeichert!", "success")
 
-    # 📅 Vergangene Einträge abrufen (neueste zuerst)
+    # 📅 Alle Einträge abrufen
     cur.execute(
         '''SELECT date, journal_entry, goal_alcohol_free, goal_healthy_food, goal_water, goal_cardio, goal_exercise, goal_reading 
            FROM fasting_challenge 
@@ -171,10 +169,25 @@ def fasten_challenge():
            ORDER BY date DESC''', (current_user.id,))
     entries = cur.fetchall()
 
+    # 📊 Gesamtstatistik berechnen
+    cur.execute(
+        '''SELECT 
+               COUNT(*) AS total_days,
+               SUM(goal_alcohol_free::int) AS alcohol_free_days,
+               SUM(goal_healthy_food::int) AS healthy_food_days,
+               SUM(goal_water::int) AS water_days,
+               SUM(goal_cardio::int) AS cardio_days,
+               SUM(goal_exercise::int) AS exercise_days,
+               SUM(goal_reading::int) AS reading_days
+           FROM fasting_challenge
+           WHERE user_id = %s''', (current_user.id,)
+    )
+    stats = cur.fetchone()
+    
     cur.close()
     conn.close()
 
-    return render_template('fasten_challenge.html', entries=entries)
+    return render_template('fasten_challenge.html', entries=entries, stats=stats)
 
 
 

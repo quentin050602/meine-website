@@ -154,11 +154,23 @@
             </div>
         {% endfor %}
     </div>
+    
+    <h2>📊 Deine Statistik:</h2>
+    <div class="entry-box">
+        <p>🔢 <strong>Gesamte Challenge-Tage:</strong> {{ stats[0] if stats else 0 }} </p>
+        <p>✅ <strong>Kein Alkohol:</strong> {{ stats[1] if stats else 0 }} von {{ stats[0] if stats else 0 }} Tagen</p>
+        <p>🥗 <strong>Unter 50g Zucker:</strong> {{ stats[2] if stats else 0 }} von {{ stats[0] if stats else 0 }} Tagen</p>
+        <p>💧 <strong>3 Liter Wasser:</strong> {{ stats[3] if stats else 0 }} von {{ stats[0] if stats else 0 }} Tagen</p>
+        <p>👣 <strong>10.000 Schritte / 30 min Cardio:</strong> {{ stats[4] if stats else 0 }} von {{ stats[0] if stats else 0 }} Tagen</p>
+        <p>🏋️‍♂️ <strong>Krafttraining:</strong> {{ stats[5] if stats else 0 }} von {{ stats[0] if stats else 0 }} Tagen</p>
+        <p>📚 <strong>10 Seiten lesen:</strong> {{ stats[6] if stats else 0 }} von {{ stats[0] if stats else 0 }} Tagen</p>
+    </div>
+
 
     <script>
         function updateDaysLeft() {
-            const startDate = new Date("2024-03-03"); // Korrigiertes Startdatum
-            const endDate = new Date("2024-04-19"); // Enddatum der Challenge
+            const startDate = new Date("2025-03-03"); // Korrigiertes Startdatum
+            const endDate = new Date("2025-04-19"); // Enddatum der Challenge
             const today = new Date();
 
             if (today < startDate) {
