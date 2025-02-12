@@ -57,6 +57,7 @@
             background: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
             overflow: hidden;
+            margin-top: 15px;
         }
 
         th, td {
@@ -70,30 +71,36 @@
             background-color: rgba(255, 255, 255, 0.3);
         }
 
+        .exercise-container {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .exercise-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #ffcc00;
+            margin-bottom: 10px;
+        }
+
         /* 🌟 Buttons */
         .button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;
-            font-size: 17px;
+            padding: 12px;
+            font-size: 16px;
             font-weight: bold;
             color: white;
             background: linear-gradient(90deg, #3498db, #2980b9);
             border: none;
             border-radius: 8px;
-            text-decoration: none;
-            transition: all 0.3s ease-in-out;
             cursor: pointer;
+            transition: all 0.3s ease-in-out;
             box-shadow: 0 4px 6px rgba(52, 152, 219, 0.3);
-            width: 100%;
-            margin-top: 15px;
+            margin-top: 10px;
         }
 
         .button:hover {
             transform: scale(1.05);
             background: linear-gradient(90deg, #2980b9, #1c6ea4);
-            box-shadow: 0 8px 16px rgba(52, 152, 219, 0.4);
         }
 
         .logout {
@@ -110,6 +117,7 @@
         .logout a:hover {
             color: #ffcc00;
         }
+
     </style>
 </head>
 <body>
@@ -121,26 +129,32 @@
             <p class="session-info"><strong>🏋️‍♂️ Trainingsplan:</strong> {{ session[1] }}</p>
 
             <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Übung</th>
-                            <th>Satz</th>
-                            <th>Wiederholungen</th>
-                            <th>Gewicht (kg)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for exercise in progress %}
-                        <tr>
-                            <td>{{ exercise[0] }}</td>
-                            <td>Satz {{ exercise[1] }}</td>
-                            <td>{{ exercise[2] }}</td>
-                            <td>{{ exercise[3] }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-
+                {% set current_exercise = None %}
+                {% for exercise in progress %}
+                    {% if current_exercise != exercise[0] %}
+                        {% if current_exercise is not none %}
+                            </tbody>
+                        </table>
+                        {% endif %}
+                        <h2 class="exercise-title">{{ exercise[0] }}</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Satz</th>
+                                    <th>Wiederholungen</th>
+                                    <th>Gewicht (kg)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                        {% set current_exercise = exercise[0] %}
+                    {% endif %}
+                    <tr>
+                        <td>{{ exercise[1] }}</td> <!-- Satznummer -->
+                        <td>{{ exercise[2] }}</td> <!-- Wiederholungen -->
+                        <td>{{ exercise[3] }}</td> <!-- Gewicht -->
+                    </tr>
+                {% endfor %}
+                </tbody>
                 </table>
             </div>
         {% else %}
