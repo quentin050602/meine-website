@@ -134,12 +134,13 @@
                         {% for exercise in progress %}
                         <tr>
                             <td>{{ exercise[0] }}</td>
-                            <td>{{ exercise[1] }}</td> <!-- Satznummer -->
-                            <td>{{ exercise[2] }}</td> <!-- Wiederholungen -->
-                            <td>{{ exercise[3] }}</td> <!-- Gewicht -->
+                            <td>Satz {{ exercise[1] }}</td>
+                            <td>{{ exercise[2] }}</td>
+                            <td>{{ exercise[3] }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
+
                 </table>
             </div>
         {% else %}
