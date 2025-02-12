@@ -157,12 +157,12 @@
 
     <script>
         function updateDaysLeft() {
-            const startDate = new Date("2024-02-12"); // Startdatum der Challenge
+            const startDate = new Date("2024-03-03"); // Korrigiertes Startdatum
             const endDate = new Date("2024-04-19"); // Enddatum der Challenge
             const today = new Date();
 
             if (today < startDate) {
-                document.getElementById("daysLeft").innerText = "Startet am 5. März!";
+                document.getElementById("daysLeft").innerText = "Startet am 3. März!";
             } else if (today > endDate) {
                 document.getElementById("daysLeft").innerText = "Challenge beendet 🎉!";
             } else {
@@ -172,6 +172,7 @@
             }
         }
         updateDaysLeft();
+
     </script>
 </body>
 </html>
